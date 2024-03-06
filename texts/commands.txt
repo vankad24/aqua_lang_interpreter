@@ -1,0 +1,24 @@
+ cd .\src\ch4\
+..\..\byaccj1.15_win32\yacc.exe -Jpackage=ch4 j0gram.y
+
+В Parser добавить
+```
+import static ch4.j0.yylex;
+import static ch4.yyerror.yyerror;
+```
+
+..\..\jflex-1.9.1\bin\jflex .\javalex.l
+
+
+cd .\src\ch5\
+..\..\byaccj1.15_win32\yacc.exe -Jpackage=ch5 -Jclass=parser j0gram.y
+
+..\..\jflex-1.9.1\bin\jflex .\javalex.l
+
+cd C:\Projects\java\JzeroCompiler
+.\Graphviz\bin\dot.exe -Tsvg texts/hello.java.dot > hello.svg
+
+// jpg почему-то не работает. Вот, можно запустить для тестов:
+echo 'digraph { a -> b }' | .\Graphviz\bin\dot.exe -Tpng > output.png
+
+

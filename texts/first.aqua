@@ -1,0 +1,9 @@
+float f;
+f = 5.3;
+int i;
+i = 4;
+println(i);
+i = 24;
+println(i);
+println("hello, jzero!");
+println(f);
