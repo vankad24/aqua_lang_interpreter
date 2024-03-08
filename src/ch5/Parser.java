@@ -17,12 +17,12 @@ package ch5;
 
 
 import static ch5.j0.yylex;
-import static ch5.yyerror.yyerror;
+import static ch5.Yyerror.yyerror;
 
 
 
 
-public class parser
+public class Parser
 {
 
 boolean yydebug;        //do I want debug output?
@@ -103,30 +103,30 @@ int i;
 
 
 String   yytext;//user variable to return contextual strings
-parserVal yyval; //used to return semantic vals from action routines
-parserVal yylval;//the 'lval' (result) I got from yylex()
-parserVal valstk[];
+ParserVal yyval; //used to return semantic vals from action routines
+ParserVal yylval;//the 'lval' (result) I got from yylex()
+ParserVal valstk[];
 int valptr;
 //###############################################################
 // methods: value stack push,pop,drop,peek.
 //###############################################################
 void val_init()
 {
-  valstk=new parserVal[YYSTACKSIZE];
-  yyval=new parserVal();
-  yylval=new parserVal();
+  valstk=new ParserVal[YYSTACKSIZE];
+  yyval=new ParserVal();
+  yylval=new ParserVal();
   valptr=-1;
 }
-void val_push(parserVal val)
+void val_push(ParserVal val)
 {
   if (valptr>=YYSTACKSIZE)
     return;
   valstk[++valptr]=val;
 }
-parserVal val_pop()
+ParserVal val_pop()
 {
   if (valptr<0)
-    return new parserVal();
+    return new ParserVal();
   return valstk[valptr--];
 }
 void val_drop(int cnt)
@@ -137,17 +137,17 @@ int ptr;
     return;
   valptr = ptr;
 }
-parserVal val_peek(int relative)
+ParserVal val_peek(int relative)
 {
 int ptr;
   ptr=valptr-relative;
   if (ptr<0)
-    return new parserVal();
+    return new ParserVal();
   return valstk[ptr];
 }
-final parserVal dup_yyval(parserVal val)
+final ParserVal dup_yyval(ParserVal val)
 {
-  parserVal dup = new parserVal();
+  ParserVal dup = new ParserVal();
   dup.ival = val.ival;
   dup.dval = val.dval;
   dup.sval = val.sval;
@@ -737,7 +737,7 @@ case 1:
 {
     yyval=j0.node("BlockStmtsOpt",1024,val_peek(0));
     j0.print(yyval);
-    j0.process((tree) yyval.obj);
+    j0.process((Tree) yyval.obj);
 }
 break;
 case 2:
@@ -1034,7 +1034,7 @@ public void run()
  * Default constructor.  Turn off with -Jnoconstruct .
 
  */
-public parser()
+public Parser()
 {
   //nothing to do
 }
@@ -1044,7 +1044,7 @@ public parser()
  * Create a parser, setting the debug to true or false.
  * @param debugMe true for debugging, false for no debug.
  */
-public parser(boolean debugMe)
+public Parser(boolean debugMe)
 {
   yydebug=debugMe;
 }

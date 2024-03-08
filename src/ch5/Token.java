@@ -1,0 +1,15 @@
+package ch5;
+
+public class Token {
+    public int id;
+    public int code;
+    public String text;
+    public int lineno;
+
+    public Token(int code, String s, int l) {
+        this.code = code;
+        text = s;
+        lineno = l;
+        id = Serial.getid();
+    }
+}

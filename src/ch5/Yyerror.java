@@ -1,9 +1,9 @@
 package ch5;
 
-public class yyerror {
+public class Yyerror {
     static int yyerror_isinitialized;
     static int yymaxstate = 1;
-    static yyerror singleton;
+    static Yyerror singleton;
 
     class errortable {
         // i == # of entries
@@ -27,7 +27,7 @@ public class yyerror {
     static errortable errtab[];
     static int __merr_errors;
 
-    public yyerror() {
+    public Yyerror() {
         System.out.println("yyerror called, yystate is " + j0.par.yystate);
         errtab = new errortable[1];
         errtab[0] = new errortable(1, "semi-colon expected");

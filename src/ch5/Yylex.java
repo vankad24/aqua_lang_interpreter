@@ -794,7 +794,7 @@ class Yylex {
           // fall through
           case 64: break;
           case 14:
-            { return j0.scan(parser.INTLIT);
+            { return j0.scan(Parser.INTLIT);
             }
           // fall through
           case 65: break;
@@ -824,7 +824,7 @@ class Yylex {
           // fall through
           case 70: break;
           case 20:
-            { return j0.scan(parser.IDENTIFIER);
+            { return j0.scan(Parser.IDENTIFIER);
             }
           // fall through
           case 71: break;
@@ -849,57 +849,57 @@ class Yylex {
           // fall through
           case 75: break;
           case 25:
-            { return j0.scan(parser.NOTEQUALTO);
+            { return j0.scan(Parser.NOTEQUALTO);
             }
           // fall through
           case 76: break;
           case 26:
-            { return j0.scan(parser.STRINGLIT);
+            { return j0.scan(Parser.STRINGLIT);
             }
           // fall through
           case 77: break;
           case 27:
-            { return j0.scan(parser.LOGICALAND);
+            { return j0.scan(Parser.LOGICALAND);
             }
           // fall through
           case 78: break;
           case 28:
-            { return j0.scan(parser.INCREMENT);
+            { return j0.scan(Parser.INCREMENT);
             }
           // fall through
           case 79: break;
           case 29:
-            { return j0.scan(parser.DECREMENT);
+            { return j0.scan(Parser.DECREMENT);
             }
           // fall through
           case 80: break;
           case 30:
-            { return j0.scan(parser.DOUBLELIT);
+            { return j0.scan(Parser.DOUBLELIT);
             }
           // fall through
           case 81: break;
           case 31:
-            { return j0.scan(parser.LESSTHANOREQUAL);
+            { return j0.scan(Parser.LESSTHANOREQUAL);
             }
           // fall through
           case 82: break;
           case 32:
-            { return j0.scan(parser.ISEQUALTO);
+            { return j0.scan(Parser.ISEQUALTO);
             }
           // fall through
           case 83: break;
           case 33:
-            { return j0.scan(parser.GREATERTHANOREQUAL);
+            { return j0.scan(Parser.GREATERTHANOREQUAL);
             }
           // fall through
           case 84: break;
           case 34:
-            { return j0.scan(parser.IF);
+            { return j0.scan(Parser.IF);
             }
           // fall through
           case 85: break;
           case 35:
-            { return j0.scan(parser.LOGICALOR);
+            { return j0.scan(Parser.LOGICALOR);
             }
           // fall through
           case 86: break;
@@ -909,77 +909,77 @@ class Yylex {
           // fall through
           case 87: break;
           case 37:
-            { return j0.scan(parser.FOR);
+            { return j0.scan(Parser.FOR);
             }
           // fall through
           case 88: break;
           case 38:
-            { return j0.scan(parser.INT);
+            { return j0.scan(Parser.INT);
             }
           // fall through
           case 89: break;
           case 39:
-            { return j0.scan(parser.BOOL);
+            { return j0.scan(Parser.BOOL);
             }
           // fall through
           case 90: break;
           case 40:
-            { return j0.scan(parser.ELSE);
+            { return j0.scan(Parser.ELSE);
             }
           // fall through
           case 91: break;
           case 41:
-            { return j0.scan(parser.NULLVAL);
+            { return j0.scan(Parser.NULLVAL);
             }
           // fall through
           case 92: break;
           case 42:
-            { return j0.scan(parser.BOOLLIT);
+            { return j0.scan(Parser.BOOLLIT);
             }
           // fall through
           case 93: break;
           case 43:
-            { return j0.scan(parser.VOID);
+            { return j0.scan(Parser.VOID);
             }
           // fall through
           case 94: break;
           case 44:
-            { return j0.scan(parser.BREAK);
+            { return j0.scan(Parser.BREAK);
             }
           // fall through
           case 95: break;
           case 45:
-            { return j0.scan(parser.CLASS);
+            { return j0.scan(Parser.CLASS);
             }
           // fall through
           case 96: break;
           case 46:
-            { return j0.scan(parser.WHILE);
+            { return j0.scan(Parser.WHILE);
             }
           // fall through
           case 97: break;
           case 47:
-            { return j0.scan(parser.DOUBLE);
+            { return j0.scan(Parser.DOUBLE);
             }
           // fall through
           case 98: break;
           case 48:
-            { return j0.scan(parser.PUBLIC);
+            { return j0.scan(Parser.PUBLIC);
             }
           // fall through
           case 99: break;
           case 49:
-            { return j0.scan(parser.RETURN);
+            { return j0.scan(Parser.RETURN);
             }
           // fall through
           case 100: break;
           case 50:
-            { return j0.scan(parser.STATIC);
+            { return j0.scan(Parser.STATIC);
             }
           // fall through
           case 101: break;
           case 51:
-            { return j0.scan(parser.STRING);
+            { return j0.scan(Parser.STRING);
             }
           // fall through
           case 102: break;

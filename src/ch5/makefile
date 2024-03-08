@@ -19,7 +19,7 @@ j0gram.icn j0gram_tab.icn: j0gram.y
 BYSRC=parser.java parserVal.java
 JSRC=j0.java Yylex.java token.java yyerror.java tree.java serial.java $(BYSRC)
 BYJOPTS= -Jclass=parser -Jpackage=ch5
-BYJIMPS= -Jyylex=ch5.j0.yylex -Jyyerror=ch5.yyerror.yyerror
+BYJIMPS= -Jyylex=ch5.j0.yylex -Jyyerror=ch5.Yyerror.yyerror
 java: j0.class
 
 j: java

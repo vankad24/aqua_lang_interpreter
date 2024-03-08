@@ -1,7 +1,6 @@
 package ch5;
 
 import java.io.FileReader;
-import java.util.HashMap;
 
 /*
 cd .\src\ch5\
@@ -22,12 +21,12 @@ import static ch5.yyerror.yyerror;
 * */
 public class j0 {
     public static Yylex yylexer;
-    public static parser par;
+    public static Parser par;
 
     public static void main(String argv[]) throws Exception {
 //        init("texts/hello.java");
         init("texts/first.aqua");
-        par = new parser();
+        par = new Parser();
         //                  par.yydebug=true;
         yylineno = 1;
         int i = par.yyparse();
@@ -71,8 +70,8 @@ public class j0 {
     public static int scan(int cat) {
         /* cat - номер лексемы (определены как константы в parser) */
         j0.par.yylval =
-                new parserVal(new tree("token", 0,
-                        new token(cat, yytext(), yylineno)));
+                new ParserVal(new Tree("token", 0,
+                        new Token(cat, yytext(), yylineno)));
         return cat;
     }
 
@@ -90,29 +89,29 @@ public class j0 {
         return (short) (s.charAt(0));
     }
 
-    public static void print(parserVal root) {
-        ((tree) root.obj).print();
-        ((tree) root.obj).print_graph(yyfilename + ".dot");
+    public static void print(ParserVal root) {
+        ((Tree) root.obj).print();
+        ((Tree) root.obj).print_graph(yyfilename + ".dot");
     }
 
-    public static tree unwrap(Object obj) {
-        if (obj instanceof token)
-            return new tree("token", 0, (token) obj);
-        else return (tree) obj;
+    public static Tree unwrap(Object obj) {
+        if (obj instanceof Token)
+            return new Tree("token", 0, (Token) obj);
+        else return (Tree) obj;
     }
 
-    public static parserVal node(String s, int r, parserVal... p) {
+    public static ParserVal node(String s, int r, ParserVal... p) {
         /* s - название правила (слева от :)
         * r - номер правила (из файла грамматики)
         * p - массив тех токенов, которые мы берём
         * */
-        tree[] t = new tree[p.length];
+        Tree[] t = new Tree[p.length];
         for (int i = 0; i < t.length; i++)
-            t[i] = (tree) (p[i].obj);
-        return new parserVal((Object) new tree(s, r, t));
+            t[i] = (Tree) (p[i].obj);
+        return new ParserVal((Object) new Tree(s, r, t));
     }
 
-    public static void process(tree root) {
+    public static void process(Tree root) {
         Interpreter interpreter = new Interpreter();
         interpreter.semantic(root);
         System.out.println("----interpretation----");

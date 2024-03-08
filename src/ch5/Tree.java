@@ -4,13 +4,13 @@ import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-class tree {
+class Tree {
     int id;
     String sym;
     int rule;
     int nkids;
-    token tok;
-    tree[] kids;
+    Token tok;
+    Tree[] kids;
 
     public String escape(String s) {
         if (s.charAt(0) == '\"')
@@ -21,7 +21,7 @@ class tree {
     public String pretty_print_name() {
         if (tok == null) return sym + "#" + (rule % 10);
         else {
-            return escape(tok.text) + ":" + tok.cat;
+            return escape(tok.text) + ":" + tok.code;
         }
     }
 
@@ -63,9 +63,9 @@ class tree {
     }
 
     void print_leaf(PrintWriter pw) {
-        String s = parser.yyname[tok.cat];
+        String s = Parser.yyname[tok.code];
         print_branch(pw);
-        pw.printf("N%d [shape=box style=dotted label=\" %s \\n ", id, s, tok.cat);
+        pw.printf("N%d [shape=box style=dotted label=\" %s \\n ", id, s, tok.code);
         pw.printf("text = %s \\l lineno = %d \\l\"];\n",
                 escape(tok.text), tok.lineno);
     }
@@ -83,7 +83,7 @@ class tree {
         for (i = 0; i < level; i++) System.out.print("\t");
         if (tok != null) {
             System.out.println(id + "   " + tok.text +
-                    " (" + tok.cat + "): " + tok.lineno);
+                    " (" + tok.code + "): " + tok.lineno);
         } else {
             System.out.println(id + "   " + sym +
                     " (" + rule + "): " + nkids);
@@ -96,19 +96,19 @@ class tree {
         print(0);
     }
 
-    public tree(String s, int r, token t) {
-        id = serial.getid();
+    public Tree(String s, int r, Token t) {
+        id = Serial.getid();
         sym = s;
         rule = r;
         tok = t;
     }
 
-    public tree(String s, int r, tree[] t) {
+    public Tree(String s, int r, Tree[] t) {
         /* s - название правила (слева от :)
          * r - номер правила (из файла грамматики)
          * p - массив тех токенов, которые мы берём
          * */
-        id = serial.getid();
+        id = Serial.getid();
         //	System.out.println("id " + id + " goes to " + s + "(" +r+")");
         sym = s;
         rule = r;

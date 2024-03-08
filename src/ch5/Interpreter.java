@@ -6,12 +6,12 @@ public class Interpreter {
     HashMap<String, Float> floatVars = new HashMap<>();
     HashMap<String, Integer> intVars = new HashMap<>();
 
-    void semantic(tree root) {
+    void semantic(Tree root) {
         System.out.println("semantic");
     }
 
 
-    void interpret(tree node) {
+    void interpret(Tree node) {
 
         switch (node.sym) {
             case "LocalVarDecl" -> {
@@ -34,9 +34,9 @@ public class Interpreter {
             }
             case "MethodCall" -> {
                 if (node.kids[0].tok.text.equals("println")) {
-                    token arg = node.kids[1].tok;
-                    switch (arg.cat) {
-                        case parser.IDENTIFIER -> {
+                    Token arg = node.kids[1].tok;
+                    switch (arg.code) {
+                        case Parser.IDENTIFIER -> {
                             String var_name = arg.text;
                             if (floatVars.containsKey(var_name)) {
                                 System.out.println(floatVars.get(var_name));
@@ -44,7 +44,7 @@ public class Interpreter {
                                 System.out.println(intVars.get(var_name));
                             }
                         }
-                        case parser.STRINGLIT -> {
+                        case Parser.STRINGLIT -> {
                             System.out.println(arg.text);
                         }
                     }
@@ -53,7 +53,7 @@ public class Interpreter {
                 }
             }
             default -> {
-                for (tree kid : node.kids) {
+                for (Tree kid : node.kids) {
                     interpret(kid);
                 }
             }
