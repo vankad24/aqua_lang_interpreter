@@ -118,5 +118,8 @@ public class j0 {
         interpreter.interpret(root);
     }
 
-
+    public static void semerror(String s) {
+        System.out.println("semantic error: " + s);
+        System.exit(1);
+    }
 }

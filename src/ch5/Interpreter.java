@@ -3,8 +3,9 @@ package ch5;
 import java.util.HashMap;
 
 public class Interpreter {
-    HashMap<String, Float> floatVars = new HashMap<>();
-    HashMap<String, Integer> intVars = new HashMap<>();
+
+    SymbolTable global_scope = new SymbolTable("global", null);
+    SymbolHandler symbolHandler = new SymbolHandler();
 
     void semantic(Tree root) {
         System.out.println("semantic");
@@ -17,20 +18,17 @@ public class Interpreter {
             case "LocalVarDecl" -> {
                 String type = node.kids[0].tok.text;
                 String var_name = node.kids[1].tok.text;
-                if (type.equals("float")) {
-                    floatVars.put(var_name, 0.0F);
-                } else if (type.equals("int")) {
-                    intVars.put(var_name, 0);
-                }
+
+                SymbolEntry entry = new SymbolEntry(var_name, type);
+                global_scope.add(var_name, entry);
+                symbolHandler.add(entry);
             }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
                 String val = node.kids[2].tok.text;
-                if (floatVars.containsKey(var_name)) {
-                    floatVars.put(var_name, Float.parseFloat(val));
-                } else if (intVars.containsKey(var_name)) {
-                    intVars.put(var_name, Integer.parseInt(val));
-                }
+
+                SymbolEntry symbolEntry = global_scope.get(var_name);
+                symbolHandler.set(symbolEntry, val);
             }
             case "MethodCall" -> {
                 if (node.kids[0].tok.text.equals("println")) {
@@ -38,11 +36,8 @@ public class Interpreter {
                     switch (arg.code) {
                         case Parser.IDENTIFIER -> {
                             String var_name = arg.text;
-                            if (floatVars.containsKey(var_name)) {
-                                System.out.println(floatVars.get(var_name));
-                            } else if (intVars.containsKey(var_name)) {
-                                System.out.println(intVars.get(var_name));
-                            }
+                            SymbolEntry symbolEntry = global_scope.get(var_name);
+                            System.out.println(symbolHandler.get(symbolEntry));
                         }
                         case Parser.STRINGLIT -> {
                             System.out.println(arg.text);
