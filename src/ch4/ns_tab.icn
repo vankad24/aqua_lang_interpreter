@@ -1,5 +1,0 @@
-class Parser(NAME, NUMBER)
-initially
-   NAME := 257
-   NUMBER := 258
-end

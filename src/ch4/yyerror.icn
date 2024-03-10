@@ -1,3 +1,0 @@
-procedure yyerror(s)
-    stop(s)
-end
