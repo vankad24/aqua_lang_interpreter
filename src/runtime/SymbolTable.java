@@ -1,4 +1,6 @@
-package ch5;
+package runtime;
+
+import frontend.j0;
 
 import java.util.HashMap;
 
@@ -7,13 +9,13 @@ public class SymbolTable {
     SymbolTable parent;
     HashMap<String, RuntimeValue> entries;
 
-    SymbolTable(String name, SymbolTable parent){
+    public SymbolTable(String name, SymbolTable parent){
         this.name = name;
         this.parent = parent;
         entries = new HashMap<>();
     }
 
-    RuntimeValue get(String name){
+    public RuntimeValue get(String name){
         RuntimeValue entry = entries.get(name);
         if (entry != null)return entry;
         if (parent != null) return parent.get(name);
@@ -21,7 +23,7 @@ public class SymbolTable {
         return null;
     }
 
-    void add(String name, RuntimeValue entry) {
+    public void add(String name, RuntimeValue entry) {
         if (entries.containsKey(name)) {
             j0.semerror("redeclaration of " + name);
         } else {

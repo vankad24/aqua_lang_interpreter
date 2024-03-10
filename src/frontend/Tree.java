@@ -1,16 +1,16 @@
-package ch5;
+package frontend;
 
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-class Tree {
-    int id;
-    String sym;
-    int rule;
-    int nkids;
-    Token tok;
-    Tree[] kids;
+public class Tree {
+    public int id;
+    public String sym;
+    public int rule;
+    public int nkids;
+    public Token tok;
+    public Tree[] kids;
 
     public String escape(String s) {
         if (s.charAt(0) == '\"')

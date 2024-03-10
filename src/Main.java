@@ -1,10 +1,14 @@
+import frontend.j0;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws Exception {
         // в каждой главе запускается файл j0
+        j0.main(args);
+        System.exit(0);
         String path = "./texts/dorrie.txt";//argv[0];
         var reader = new FileReader(path);
         var buf = new char[20];

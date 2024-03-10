@@ -1,4 +1,4 @@
-package ch5;
+package frontend;
 %%
 %int
 id=([a-zA-Z_][a-zA-Z0-9_]*)

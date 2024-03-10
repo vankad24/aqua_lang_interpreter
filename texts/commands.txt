@@ -10,8 +10,8 @@ import static ch4.yyerror.yyerror;
 ..\..\jflex-1.9.1\bin\jflex .\javalex.l
 
 
-cd .\src\ch5\
-..\..\byaccj1.15_win32\yacc.exe -Jpackage=ch5 -Jclass=parser j0gram.y
+cd .\src\frontend\
+..\..\byaccj1.15_win32\yacc.exe -Jpackage=frontend -Jclass=parser j0gram.y
 
 ..\..\jflex-1.9.1\bin\jflex .\javalex.l
 

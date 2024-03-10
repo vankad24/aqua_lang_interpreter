@@ -1,7 +1,7 @@
-package ch5;
+package frontend;
 
 /* id генератор */
-class Serial {
+public class Serial {
     static int serial;
 
     public static int getid() {

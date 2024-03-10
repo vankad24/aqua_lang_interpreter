@@ -1,16 +1,24 @@
-package ch5;
+package runtime;
+
+import frontend.Parser;
+import frontend.Token;
+import frontend.Tree;
+import runtime.RuntimeValue;
+import runtime.SymbolHandler;
+import runtime.SymbolTable;
+
 
 public class Interpreter {
 
     SymbolTable global_scope = new SymbolTable("global", null);
     SymbolHandler symbolHandler = new SymbolHandler();
 
-    void semantic(Tree root) {
+    public void semantic(Tree root) {
         System.out.println("semantic");
     }
 
 
-    void interpret(Tree node) {
+    public void interpret(Tree node) {
 
         switch (node.sym) {
             case "LocalVarDecl" -> {

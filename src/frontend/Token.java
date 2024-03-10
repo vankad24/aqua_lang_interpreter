@@ -1,4 +1,4 @@
-package ch5;
+package frontend;
 
 public class Token {
     public int id;

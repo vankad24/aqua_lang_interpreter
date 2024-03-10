@@ -13,11 +13,13 @@
 
 
 
-package ch5;
+package frontend;
 
 
-import static ch5.j0.yylex;
-import static ch5.Yyerror.yyerror;
+
+
+import static frontend.j0.yylex;
+import static frontend.Yyerror.yyerror;
 
 
 

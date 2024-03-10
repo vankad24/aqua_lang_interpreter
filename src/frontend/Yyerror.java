@@ -1,4 +1,4 @@
-package ch5;
+package frontend;
 
 public class Yyerror {
     static int yyerror_isinitialized;

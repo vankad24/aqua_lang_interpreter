@@ -1,4 +1,6 @@
-package ch5;
+package runtime;
+
+import frontend.j0;
 
 public class ValueType {
     public static final int INTEGER = 1;
