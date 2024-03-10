@@ -7,18 +7,18 @@ import runtime.Interpreter;
 import java.io.FileReader;
 
 /*
-cd .\src\ch5\
+cd .\src\frontend\
 
 Создать лексер:
 ..\..\jflex-1.9.1\bin\jflex .\javalex.l
 
 Создать парсер:
-..\..\byaccj1.15_win32\yacc.exe -Jpackage=ch5 -Jclass=parser j0gram.y
+..\..\byaccj1.15_win32\yacc.exe -Jpackage=frontend -Jclass=Parser j0gram.y
 
 В Parser добавить
 ```
-import static ch5.j0.yylex;
-import static ch5.yyerror.yyerror;
+import static frontend.j0.yylex;
+import static frontend.yyerror.yyerror;
 ```
 
 ..\..\Graphviz\bin\dot.exe -Tsvg ../../texts/hello.java.dot > ../../hello.svg
@@ -29,7 +29,7 @@ public class j0 {
 
     public static void main(String argv[]) throws Exception {
 //        init("texts/hello.java");
-        init("texts/first.aqua");
+        init("texts/expr.aqua");
         par = new Parser();
         //                  par.yydebug=true;
         yylineno = 1;

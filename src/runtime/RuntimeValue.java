@@ -1,17 +1,15 @@
 package runtime;
 
 public class RuntimeValue {
-    String name;
     int type;
     Object value = null;
 
-    public RuntimeValue(String name, int type) {
-        this.name = name;
+    public RuntimeValue(int type, Object value) {
         this.type = type;
+        this.value = value;
     }
 
-    public RuntimeValue(String name, String type) {
-        this.name = name;
+    public RuntimeValue(String type) {
         this.type = ValueType.stringToType(type);
     }
 

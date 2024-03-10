@@ -2,7 +2,7 @@ package frontend;
 
 public class Token {
     public int id;
-    public int code;
+    public int code; /* from Parser class */
     public String text;
     public int lineno;
 

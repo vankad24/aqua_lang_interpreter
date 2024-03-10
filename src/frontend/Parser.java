@@ -101,7 +101,7 @@ int i;
 
 
 //########## SEMANTIC VALUES ##########
-//public class parserVal is defined in parserVal.java
+//public class ParserVal is defined in ParserVal.java
 
 
 String   yytext;//user variable to return contextual strings
@@ -921,27 +921,27 @@ break;
 case 99:
 //#line 126 "j0gram.y"
 {
-      yyval=j0.node("MulExpr",1310,val_peek(2),val_peek(0)); }
+      yyval=j0.node("MulExpr",1310,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 100:
 //#line 128 "j0gram.y"
 {
-      yyval=j0.node("MulExpr",1311,val_peek(2),val_peek(0)); }
+      yyval=j0.node("MulExpr",1311,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 101:
 //#line 130 "j0gram.y"
 {
-      yyval=j0.node("MulExpr",1312,val_peek(2),val_peek(0)); }
+      yyval=j0.node("MulExpr",1312,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 103:
 //#line 133 "j0gram.y"
 {
-      yyval=j0.node("AddExpr",1320,val_peek(2),val_peek(0)); }
+      yyval=j0.node("AddExpr",1320,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 104:
 //#line 135 "j0gram.y"
 {
-      yyval=j0.node("AddExpr",1321,val_peek(2),val_peek(0)); }
+      yyval=j0.node("AddExpr",1321,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 110:
 //#line 138 "j0gram.y"
@@ -973,7 +973,7 @@ case 120:
 {
 yyval=j0.node("Assignment",1370, val_peek(2), val_peek(1), val_peek(0)); }
 break;
-//#line 896 "parser.java"
+//#line 896 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

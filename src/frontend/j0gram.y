@@ -8,7 +8,7 @@
 StartTerm: BlockStmtsOpt{
     $$=j0.node("BlockStmtsOpt",1024,$1);
     j0.print($$);
-    j0.process((tree) $$.obj);
+    j0.process((Tree) $$.obj);
 };
 ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody {
   $$=j0.node("ClassDecl",1000,$3,$4);
@@ -124,16 +124,16 @@ UnaryExpr:  '-' UnaryExpr {
     | PostFixExpr ;
 MulExpr: UnaryExpr
     | MulExpr '*' UnaryExpr {
-      $$=j0.node("MulExpr",1310,$1,$3); }
+      $$=j0.node("MulExpr",1310,$1,$2,$3); }
     | MulExpr '/' UnaryExpr {
-      $$=j0.node("MulExpr",1311,$1,$3); }
+      $$=j0.node("MulExpr",1311,$1,$2,$3); }
     | MulExpr '%' UnaryExpr {
-      $$=j0.node("MulExpr",1312,$1,$3); };
+      $$=j0.node("MulExpr",1312,$1,$2,$3); };
 AddExpr: MulExpr
     | AddExpr '+' MulExpr {
-      $$=j0.node("AddExpr",1320,$1,$3); }
+      $$=j0.node("AddExpr",1320,$1,$2,$3); }
     | AddExpr '-' MulExpr {
-      $$=j0.node("AddExpr",1321,$1,$3); };
+      $$=j0.node("AddExpr",1321,$1,$2,$3); };
 RelOp: LESSTHANOREQUAL | GREATERTHANOREQUAL | '<' | '>' ;
 RelExpr: AddExpr | RelExpr RelOp AddExpr {
   $$=j0.node("RelExpr",1330,$1,$2,$3); };
