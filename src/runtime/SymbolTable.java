@@ -7,28 +7,37 @@ import java.util.HashMap;
 public class SymbolTable {
     String name;
     SymbolTable parent;
-    HashMap<String, RuntimeValue> entries;
+    HashMap<String, RuntimeValue> variables;
 
     public SymbolTable(String name, SymbolTable parent){
         this.name = name;
         this.parent = parent;
-        entries = new HashMap<>();
+        variables = new HashMap<>();
     }
 
-    public RuntimeValue get(String name){
-        RuntimeValue entry = entries.get(name);
-        if (entry != null)return entry;
-        if (parent != null) return parent.get(name);
-        j0.semerror("unknown symbol "+ name);
-        return null;
-    }
-
-    public void add(String name, RuntimeValue entry) {
-        if (entries.containsKey(name)) {
-            j0.semerror("redeclaration of " + name);
-        } else {
-            entries.put(name, entry);
+    public RuntimeValue getVar(String name){
+        RuntimeValue runtimeValue = variables.get(name);
+        if (runtimeValue != null){
+            if (runtimeValue.value == null) j0.semerror("The variable "+ name+" is not defined");
+            return runtimeValue;
         }
+        if (parent == null) j0.semerror("Unknown name "+ name);
+        return parent.getVar(name);
+    }
+
+    public void addVar(String name, RuntimeValue runtimeValue) {
+        if (variables.containsKey(name))
+            j0.semerror("Redeclaration of " + name);
+        variables.put(name, runtimeValue);
+    }
+
+    public void setVar(String name, Object value){
+        RuntimeValue runtimeValue = variables.get(name);
+        if (runtimeValue != null){
+            runtimeValue.value = value;
+        }
+        else if (parent == null) j0.semerror("Unknown name "+ name);
+        else parent.setVar(name, value);
     }
 
 }
