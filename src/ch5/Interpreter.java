@@ -1,7 +1,5 @@
 package ch5;
 
-import java.util.HashMap;
-
 public class Interpreter {
 
     SymbolTable global_scope = new SymbolTable("global", null);
@@ -19,16 +17,23 @@ public class Interpreter {
                 String type = node.kids[0].tok.text;
                 String var_name = node.kids[1].tok.text;
 
-                SymbolEntry entry = new SymbolEntry(var_name, type);
+                RuntimeValue entry = new RuntimeValue(var_name, type);
                 global_scope.add(var_name, entry);
                 symbolHandler.add(entry);
             }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
-                String val = node.kids[2].tok.text;
+                Tree right = node.kids[2];
 
-                SymbolEntry symbolEntry = global_scope.get(var_name);
-                symbolHandler.set(symbolEntry, val);
+                if (right.sym.equals("token")){
+                    String val = node.kids[2].tok.text;
+                    RuntimeValue runtimeValue = global_scope.get(var_name);
+                    symbolHandler.set(runtimeValue, val);
+                }else if (right.sym.equals("AddExpr")){
+                    //todo
+                }
+
+
             }
             case "MethodCall" -> {
                 if (node.kids[0].tok.text.equals("println")) {
@@ -36,8 +41,8 @@ public class Interpreter {
                     switch (arg.code) {
                         case Parser.IDENTIFIER -> {
                             String var_name = arg.text;
-                            SymbolEntry symbolEntry = global_scope.get(var_name);
-                            System.out.println(symbolHandler.get(symbolEntry));
+                            RuntimeValue runtimeValue = global_scope.get(var_name);
+                            System.out.println(symbolHandler.get(runtimeValue));
                         }
                         case Parser.STRINGLIT -> {
                             System.out.println(arg.text);

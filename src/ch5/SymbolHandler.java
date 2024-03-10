@@ -6,24 +6,24 @@ public class SymbolHandler {
     HashMap<String, Float> floatVars = new HashMap<>();
     HashMap<String, Integer> intVars = new HashMap<>();
 
-    public void add(SymbolEntry symbol) {
+    public void add(RuntimeValue symbol) {
         switch (symbol.type){
-            case SymbolType.FLOAT -> floatVars.put(symbol.name, 0.0f);
-            case SymbolType.INTEGER -> intVars.put(symbol.name, 0);
+            case ValueType.FLOAT -> floatVars.put(symbol.name, 0.0f);
+            case ValueType.INTEGER -> intVars.put(symbol.name, 0);
         }
     }
 
-    public void set(SymbolEntry symbol, String value) {
+    public void set(RuntimeValue symbol, String value) {
         switch (symbol.type){
-            case SymbolType.FLOAT -> floatVars.put(symbol.name, Float.parseFloat(value));
-            case SymbolType.INTEGER -> intVars.put(symbol.name, Integer.parseInt(value));
+            case ValueType.FLOAT -> floatVars.put(symbol.name, Float.parseFloat(value));
+            case ValueType.INTEGER -> intVars.put(symbol.name, Integer.parseInt(value));
         }
     }
 
-    public Object get(SymbolEntry symbol) {
+    public Object get(RuntimeValue symbol) {
         return switch (symbol.type){
-            case SymbolType.FLOAT -> floatVars.get(symbol.name);
-            case SymbolType.INTEGER -> intVars.get(symbol.name);
+            case ValueType.FLOAT -> floatVars.get(symbol.name);
+            case ValueType.INTEGER -> intVars.get(symbol.name);
             default -> null;
         };
     }

@@ -1,6 +1,6 @@
 package ch5;
 
-public class SymbolType {
+public class ValueType {
     public static final int INTEGER = 1;
     public static final int FLOAT = 2;
     public static final int FUNCTION = 3;
