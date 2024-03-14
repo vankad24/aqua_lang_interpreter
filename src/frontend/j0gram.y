@@ -20,7 +20,7 @@ ClassBodyDecls: ClassBodyDecl
 | ClassBodyDecls ClassBodyDecl {
   $$=j0.node("ClassBodyDecls",1020,$1,$2); };
 ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
-FieldDecl: Type VarDecls ';' {
+FieldDecl: Type VarDecls StmtEnd{
   $$=j0.node("FieldDecl",1030,$1,$2); };
 Type: INT | DOUBLE | BOOL | STRING | Name ;
 
@@ -56,17 +56,19 @@ Block: '{' BlockStmtsOpt '}' {$$=j0.node("Block",1200,$2);};
 BlockStmtsOpt: BlockStmts | ;
 BlockStmts:  BlockStmt | BlockStmts BlockStmt {
   $$=j0.node("BlockStmts",1130,$1,$2); };
-BlockStmt:   LocalVarDeclStmt | Stmt ;
+BlockStmt: Stmt ;
 
-LocalVarDeclStmt: LocalVarDecl ';' ;
+StmtEnd: ';' | ;
+
+LocalVarDeclStmt: LocalVarDecl StmtEnd ;
 LocalVarDecl: Type VarDecls {
   $$=j0.node("LocalVarDecl",1140,$1,$2); };
 
 Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt
       | IfThenStmt | IfThenElseStmt | IfThenElseIfStmt
-      | WhileStmt | ForStmt ;
+      | WhileStmt | ForStmt | LocalVarDeclStmt;
 
-ExprStmt: StmtExpr ';' ;
+ExprStmt: StmtExpr StmtEnd;
 
 StmtExpr: Assignment | MethodCall ;
 
@@ -95,9 +97,9 @@ ForUpdate: StmtExprList | ;
 StmtExprList: StmtExpr | StmtExprList ',' StmtExpr {
   $$=j0.node("StmtExprList",1230,$1,$3); };
 
-BreakStmt: BREAK ';' | BREAK IDENTIFIER ';' {
+BreakStmt: BREAK StmtEnd | BREAK IDENTIFIER StmtEnd {
   $$=j0.node("BreakStmt",1240,$2); };
-ReturnStmt: RETURN ExprOpt ';' {
+ReturnStmt: RETURN ExprOpt StmtEnd {
   $$=j0.node("ReturnStmt",1250,$2); };
 
 Primary:  Literal | FieldAccess | MethodCall | '(' Expr ')' {
@@ -153,3 +155,4 @@ Assignment: LeftHandSide AssignOp Expr {
 $$=j0.node("Assignment",1370, $1, $2, $3); };
 LeftHandSide: Name | FieldAccess ;
 AssignOp: '=' | INCREMENT | DECREMENT ;
+%%

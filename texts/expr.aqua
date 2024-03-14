@@ -1,5 +1,5 @@
-float f;
-int i;
-i = 4;
-f = (5.3 + i) * 2;
-println(f);
+float f
+int i
+i = 4
+f = (5.3 + i) * 2
+println(f)
