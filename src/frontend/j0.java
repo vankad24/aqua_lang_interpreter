@@ -62,21 +62,17 @@ public class j0 {
         return rv;
     }
 
-    public static String yytext() {
-        return yylexer.yytext();
-    }
-
     public static void lexErr(String s) {
         System.err.println(s);
         System.exit(1);
     }
 
-    public static int scan(int cat) {
-        /* cat - номер лексемы (определены как константы в parser) */
+    public static int scan(int code) {
+        /* code - номер лексемы (определены как константы в parser) */
         j0.par.yylval =
                 new ParserVal(new Tree("token", 0,
-                        new Token(cat, yytext(), yylineno)));
-        return cat;
+                        new Token(code, yylexer.yytext(), yylineno)));
+        return code;
     }
 
     public static void newline() {

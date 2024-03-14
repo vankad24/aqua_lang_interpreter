@@ -37,7 +37,7 @@ public class Yyerror {
         //      if (singleton == null) singleton = new yyerror();
         //      if (s.indexOf("stack") != -1) {
         System.err.println(" line " + j0.yylineno +
-                ", lexeme \"" + j0.yytext() + "\": " + s);
+                ", lexeme \"" + j0.yylexer.yytext() + "\": " + s);
         System.exit(1);
         //      }
         if (__merr_errors++ > 10) {
@@ -78,7 +78,7 @@ public class Yyerror {
         if (s.equals("syntax error") || s.equals("parse error")) {
             s = s + " (" + state + ";" + j0.par.yychar + ")";
         }
-        System.err.println(j0.yylineno + ": # \\\"" + j0.yytext() + "\\\": " + s);
+        System.err.println(j0.yylineno + ": # \\\"" + j0.yylexer.yytext() + "\\\": " + s);
     }
 }
 
