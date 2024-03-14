@@ -1,8 +1,8 @@
 package runtime;
 
 public class RuntimeValue {
-    int type;
-    Object value = null;
+    public int type;
+    public Object value = null;
 
     public RuntimeValue(int type, Object value) {
         this.type = type;
