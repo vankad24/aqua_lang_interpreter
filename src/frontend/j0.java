@@ -122,4 +122,9 @@ public class j0 {
         System.out.println("semantic error: " + s);
         System.exit(1);
     }
+
+    public static void error(String s) {
+        System.out.println("some error: " + s);
+        System.exit(1);
+    }
 }

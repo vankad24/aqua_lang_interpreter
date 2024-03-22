@@ -69,26 +69,17 @@ LocalVarDecl: Type VarDecls {
   $$=j0.node("LocalVarDecl",1140,$1,$2); };
 
 Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt
-      | IfThenStmt | IfThenElseStmt | IfThenElseIfStmt
+      | IfStmt | IfElseStmt
       | WhileStmt | ForStmt | LocalVarDeclStmt;
 
 ExprStmt: StmtExpr StmtEnd;
 
 StmtExpr: Assignment | MethodCall ;
 
-IfThenStmt: IF '(' Expr ')' Block {
-  $$=j0.node("IfThenStmt",1150,$3,$5); };
-IfThenElseStmt: IF '(' Expr ')' Block ELSE Block {
-  $$=j0.node("IfThenElseStmt",1160,$3,$5,$7); };
-IfThenElseIfStmt: IF '(' Expr ')' Block ElseIfSequence {
-  $$=j0.node("IfThenElseIfStmt",1170,$3,$5,$6); }
-|  IF '(' Expr ')' Block ElseIfSequence ELSE Block {
-  $$=j0.node("IfThenElseIfStmt",1171,$3,$5,$6,$8); };
-
-ElseIfSequence: ElseIfStmt | ElseIfSequence ElseIfStmt {
-  $$=j0.node("ElseIfSequence",1180,$1,$2); };
-ElseIfStmt: ELSE IfThenStmt {
-  $$=j0.node("ElseIfStmt",1190,$2); };
+IfStmt: IF Expr Block { $$=j0.node("IfStmt",1150,$2,$3); }
+| IF '(' Expr ')' Stmt { $$=j0.node("IfStmt",1151,$3,$5); };
+IfElseStmt: IF '(' Expr ')' Stmt ELSE Stmt { $$=j0.node("IfElseStmt",1160,$3,$5,$7); }
+| IF Expr Block ELSE Stmt { $$=j0.node("IfElseStmt",1161,$2,$3,$5); };
 
 WhileStmt: WHILE '(' Expr ')' Stmt {
   $$=j0.node("WhileStmt",1210,$3,$5); };

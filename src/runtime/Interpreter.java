@@ -3,6 +3,7 @@ package runtime;
 import frontend.Parser;
 import frontend.Token;
 import frontend.Tree;
+import frontend.j0;
 
 import static runtime.PrimitiveHandler.processOperator;
 
@@ -48,9 +49,18 @@ public class Interpreter {
                     System.out.println("Unknown function " + node.kids[0].tok.text);
                 }
             }
+            case "IfStmt" -> {
+                processIfElse(node.kids[0], node.kids[1], null, scope);
+            }
+            case "IfElseStmt" -> {
+                processIfElse(node.kids[0], node.kids[1], node.kids[2], scope);
+            }
             default -> {
-                for (Tree kid : node.kids) {
-                    evalBlock(kid, scope);
+                if (node.kids == null)j0.error("null node: "+node.sym+" "+node.tok);
+                else {
+                    for (Tree kid : node.kids) {
+                        evalBlock(kid, scope);
+                    }
                 }
             }
         }
@@ -73,6 +83,17 @@ public class Interpreter {
 
         }
         return null;
+    }
+
+    void processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope){
+        var condition = evalExpr(condition_expr, scope);
+        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the if stmt");
+        if ((boolean) condition.value){
+            evalBlock(if_block, new SymbolTable("if_stmt", scope));
+        }else if (else_block!=null){
+            if (else_block.sym.equals("IfElseStmt"))evalBlock(else_block, scope);
+            else evalBlock(else_block, new SymbolTable("else_stmt", scope));
+        }
     }
 
 
