@@ -2,17 +2,19 @@ package runtime;
 
 import frontend.Parser;
 import frontend.Token;
+import frontend.j0;
 
 public class PrimitiveHandler {
 
     public static RuntimeValue processOperator(RuntimeValue v1, String op, RuntimeValue v2) {
-        int result_type = determineResultType(v1, v2);
-        v1 = castToType(v1, result_type);
-        v2 = castToType(v2, result_type);
+        int new_type = determineResultType(v1, v2);
+        v1 = castToType(v1, new_type);
+        v2 = castToType(v2, new_type);
 
-        return switch (result_type) {
+        return switch (new_type) {
             case ValueType.FLOAT -> handleFloat((float) v1.value, (float) v2.value, op);
             case ValueType.INTEGER -> handleInt((int) v1.value, (int) v2.value, op);
+            case ValueType.BOOL -> handleBool((boolean) v1.value, (boolean) v2.value, op);
             default -> null;
         };
 
@@ -27,12 +29,18 @@ public class PrimitiveHandler {
                     case ValueType.INTEGER -> {
                         return new RuntimeValue(ValueType.FLOAT, (float) (int) v.value);
                     }
+                    case ValueType.BOOL -> {
+                        return new RuntimeValue(ValueType.FLOAT, (boolean)v.value ? 1f : 0f);
+                    }
                 }
             }
             case ValueType.INTEGER -> {
                 switch (v.type) {
                     case ValueType.FLOAT -> {
                         return new RuntimeValue(ValueType.INTEGER, (int) (float) v.value);
+                    }
+                    case ValueType.BOOL -> {
+                        return new RuntimeValue(ValueType.INTEGER, (boolean)v.value ? 1 : 0);
                     }
                 }
             }
@@ -51,34 +59,76 @@ public class PrimitiveHandler {
         return switch (t.code) {
             case Parser.DOUBLELIT -> new RuntimeValue(ValueType.FLOAT, Float.parseFloat(t.text));
             case Parser.INTLIT -> new RuntimeValue(ValueType.INTEGER, Integer.parseInt(t.text));
+            case Parser.BOOLLIT -> new RuntimeValue(ValueType.BOOL, t.text.equals("true"));
             default -> null;
         };
     }
 
+    public static int tokenToType(Token type){
+        return switch (type.code){
+            case Parser.INT-> ValueType.INTEGER;
+            case Parser.FLOAT-> ValueType.FLOAT;
+            case Parser.BOOL-> ValueType.BOOL;
+            default -> {
+                j0.semerror("unknown type "+type);
+                yield -1;
+            }
+        };
+    }
+
     static RuntimeValue handleInt(int v1, int v2, String op) {
-        var result = switch (op) {
-            case "+" -> v1 + v2;
-            case "-" -> v1 - v2;
-            case "*" -> v1 * v2;
-            case "/" -> v1 / v2;
-            case "%" -> v1 % v2;
+        return switch (op) {
+            case "+" -> new RuntimeValue(ValueType.INTEGER, v1 + v2);
+            case "-" -> new RuntimeValue(ValueType.INTEGER,v1 - v2);
+            case "*" -> new RuntimeValue(ValueType.INTEGER,v1 * v2);
+            case "/" -> new RuntimeValue(ValueType.INTEGER,v1 / v2);
+            case "%" -> new RuntimeValue(ValueType.INTEGER,v1 % v2);
+            case ">" -> new RuntimeValue(ValueType.BOOL,v1 > v2);
+            case "<" -> new RuntimeValue(ValueType.BOOL,v1 < v2);
+            case "<=" -> new RuntimeValue(ValueType.BOOL,v1 <= v2);
+            case ">=" -> new RuntimeValue(ValueType.BOOL,v1 >= v2);
+            case "==" -> new RuntimeValue(ValueType.BOOL,v1 == v2);
+            case "!=" -> new RuntimeValue(ValueType.BOOL,v1 != v2);
             default -> {
                 throw new IllegalArgumentException("Unsupported operator: " + op);
             }
         };
-        return new RuntimeValue(ValueType.INTEGER, result);
     }
 
     static RuntimeValue handleFloat(float v1, float v2, String op) {
-        var result = switch (op) {
-            case "+" -> v1 + v2;
-            case "-" -> v1 - v2;
-            case "*" -> v1 * v2;
-            case "/" -> v1 / v2;
+        return switch (op) {
+            case "+" -> new RuntimeValue(ValueType.FLOAT, v1 + v2);
+            case "-" -> new RuntimeValue(ValueType.FLOAT,v1 - v2);
+            case "*" -> new RuntimeValue(ValueType.FLOAT,v1 * v2);
+            case "/" -> new RuntimeValue(ValueType.FLOAT,v1 / v2);
+            case ">" -> new RuntimeValue(ValueType.BOOL,v1 > v2);
+            case "<" -> new RuntimeValue(ValueType.BOOL,v1 < v2);
+            case "<=" -> new RuntimeValue(ValueType.BOOL,v1 <= v2);
+            case ">=" -> new RuntimeValue(ValueType.BOOL,v1 >= v2);
+            case "==" -> new RuntimeValue(ValueType.BOOL,v1 == v2);
+            case "!=" -> new RuntimeValue(ValueType.BOOL,v1 != v2);
             default -> {
                 throw new IllegalArgumentException("Unsupported operator: " + op);
             }
         };
-        return new RuntimeValue(ValueType.FLOAT, result);
+    }
+
+    private static RuntimeValue handleBool(boolean v1, boolean v2, String op) {
+        return switch (op) {
+            case "+" -> {
+                int r = 0;
+                if (v1)r++;
+                if (v2)r++;
+                yield new RuntimeValue(ValueType.INTEGER, r);
+            }
+            case "*" -> new RuntimeValue(ValueType.INTEGER,v1 && v2 ? 1 : 0);
+            case "&&" -> new RuntimeValue(ValueType.BOOL,v1 && v2);
+            case "||" -> new RuntimeValue(ValueType.BOOL,v1 || v2);
+            case "==" -> new RuntimeValue(ValueType.BOOL,v1 == v2);
+            case "!=" -> new RuntimeValue(ValueType.BOOL,v1 != v2);
+            default -> {
+                throw new IllegalArgumentException("Unsupported operator: " + op);
+            }
+        };
     }
 }

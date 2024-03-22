@@ -12,4 +12,14 @@ public class Token {
         lineno = l;
         id = Serial.getid();
     }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "id=" + id +
+                ", code=" + code +
+                ", text='" + text + '\'' +
+                ", lineno=" + lineno +
+                '}';
+    }
 }

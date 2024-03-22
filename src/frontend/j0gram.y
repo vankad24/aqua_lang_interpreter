@@ -1,9 +1,13 @@
-%token BREAK DOUBLE ELSE FOR IF INT RETURN VOID WHILE
+%token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE
 %token IDENTIFIER CLASSNAME CLASS STRING BOOL
 %token INTLIT DOUBLELIT STRINGLIT BOOLLIT NULLVAL
 %token LESSTHANOREQUAL GREATERTHANOREQUAL
 %token ISEQUALTO NOTEQUALTO LOGICALAND LOGICALOR
 %token INCREMENT DECREMENT PUBLIC STATIC
+%{
+import static frontend.j0.yylex;
+import static frontend.Yyerror.yyerror;
+%}
 %%
 StartTerm: BlockStmtsOpt{
     $$=j0.node("BlockStmtsOpt",1024,$1);
@@ -22,7 +26,7 @@ ClassBodyDecls: ClassBodyDecl
 ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
 FieldDecl: Type VarDecls StmtEnd{
   $$=j0.node("FieldDecl",1030,$1,$2); };
-Type: INT | DOUBLE | BOOL | STRING | Name ;
+Type: INT | FLOAT | BOOL | STRING | Name ;
 
 Name: IDENTIFIER | QualifiedName ;
 QualifiedName: Name '.' IDENTIFIER {
@@ -85,6 +89,7 @@ ElseIfSequence: ElseIfStmt | ElseIfSequence ElseIfStmt {
   $$=j0.node("ElseIfSequence",1180,$1,$2); };
 ElseIfStmt: ELSE IfThenStmt {
   $$=j0.node("ElseIfStmt",1190,$2); };
+
 WhileStmt: WHILE '(' Expr ')' Stmt {
   $$=j0.node("WhileStmt",1210,$3,$5); };
 
@@ -119,7 +124,7 @@ MethodCall: Name '(' ArgListOpt ')' {
 	;
 
 PostFixExpr: Primary | Name ;
-UnaryExpr:  '-' UnaryExpr {
+UnaryExpr: '-' UnaryExpr {
   $$=j0.node("UnaryExpr",1300,$1,$2); }
     | '!' UnaryExpr {
   $$=j0.node("UnaryExpr",1301,$1,$2); }
@@ -142,13 +147,13 @@ RelExpr: AddExpr | RelExpr RelOp AddExpr {
 
 EqExpr: RelExpr
     | EqExpr ISEQUALTO RelExpr {
-  $$=j0.node("EqExpr",1340,$1,$3); }
+  $$=j0.node("EqExpr",1340,$1,$2,$3); }
 | EqExpr NOTEQUALTO RelExpr {
-  $$=j0.node("EqExpr",1341,$1,$3); };
+  $$=j0.node("EqExpr",1341,$1,$2,$3); };
 CondAndExpr: EqExpr | CondAndExpr LOGICALAND EqExpr {
-  $$=j0.node("CondAndExpr", 1350, $1, $3); };
+  $$=j0.node("CondAndExpr", 1350, $1,$2, $3); };
 CondOrExpr: CondAndExpr | CondOrExpr LOGICALOR CondAndExpr {
-  $$=j0.node("CondOrExpr", 1360, $1, $3); };
+  $$=j0.node("CondOrExpr", 1360, $1,$2, $3); };
 
 Expr: CondOrExpr | Assignment ;
 Assignment: LeftHandSide AssignOp Expr {

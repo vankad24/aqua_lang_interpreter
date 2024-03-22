@@ -31,7 +31,7 @@ public class j0 {
 //        init("texts/hello.java");
         init("texts/expr.aqua");
         par = new Parser();
-        //                  par.yydebug=true;
+        //par.yydebug=true;
         yylineno = 1;
         int i = par.yyparse();
         if (i == 0)

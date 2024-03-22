@@ -22,10 +22,9 @@ public class Interpreter {
     public void evalBlock(Tree node, SymbolTable scope) {
         switch (node.sym) {
             case "LocalVarDecl" -> {
-                String type = node.kids[0].tok.text;
+                var type = node.kids[0].tok;
                 String var_name = node.kids[1].tok.text;
-                scope.addVar(var_name, new RuntimeValue(type));
-
+                scope.addVar(var_name, new RuntimeValue(PrimitiveHandler.tokenToType(type)));
             }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
@@ -65,7 +64,7 @@ public class Interpreter {
                     return scope.getVar(t.text);
                 return PrimitiveHandler.literalToValue(node.tok);
             }
-            case "AddExpr", "MulExpr"->{
+            case "AddExpr", "MulExpr","RelExpr","EqExpr","CondAndExpr","CondOrExpr"->{
                 var left = evalExpr(node.kids[0], scope);
                 var op = node.kids[1].tok.text;
                 var right = evalExpr(node.kids[2], scope);

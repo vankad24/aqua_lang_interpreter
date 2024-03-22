@@ -9,9 +9,8 @@ public class RuntimeValue {
         this.value = value;
     }
 
-    public RuntimeValue(String type) {
-        this.type = ValueType.stringToType(type);
+    public RuntimeValue(int type) {
+        this.type = type;
     }
-
 
 }
