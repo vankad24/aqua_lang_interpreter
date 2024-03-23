@@ -1,4 +1,4 @@
-%token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE
+%token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE DO
 %token IDENTIFIER CLASSNAME CLASS STRING BOOL
 %token INTLIT DOUBLELIT STRINGLIT BOOLLIT NULLVAL
 %token LESSTHANOREQUAL GREATERTHANOREQUAL
@@ -70,7 +70,7 @@ LocalVarDecl: Type VarDecls {
 
 Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt
       | IfStmt | IfElseStmt
-      | WhileStmt | ForStmt | LocalVarDeclStmt;
+      | DoWhileStmt | WhileStmt | ForStmt | LocalVarDeclStmt;
 
 ExprStmt: StmtExpr StmtEnd;
 
@@ -81,8 +81,13 @@ IfStmt: IF Expr Block { $$=j0.node("IfStmt",1150,$2,$3); }
 IfElseStmt: IF '(' Expr ')' Stmt ELSE Stmt { $$=j0.node("IfElseStmt",1160,$3,$5,$7); }
 | IF Expr Block ELSE Stmt { $$=j0.node("IfElseStmt",1161,$2,$3,$5); };
 
-WhileStmt: WHILE '(' Expr ')' Stmt {
-  $$=j0.node("WhileStmt",1210,$3,$5); };
+WhileStmt: WHILE '(' Expr ')' Stmt { $$=j0.node("WhileStmt",1210,$3,$5); }
+| WHILE Expr Block { $$=j0.node("WhileStmt",1211,$2,$3); };
+
+DoWhileStmt: DO Block WHILE '(' Expr ')' {
+    $$=j0.node("DoWhileStmt",1212,$2,$5); }|
+    DO Block WHILE Expr{
+        $$=j0.node("DoWhileStmt",1213,$2,$4); };
 
 ForStmt: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block {
   $$=j0.node("ForStmt",1220,$3,$5,$7,$9); };

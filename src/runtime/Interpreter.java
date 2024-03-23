@@ -55,13 +55,19 @@ public class Interpreter {
             case "IfElseStmt" -> {
                 processIfElse(node.kids[0], node.kids[1], node.kids[2], scope);
             }
-            default -> {
-                if (node.kids == null)j0.error("null node: "+node.sym+" "+node.tok);
-                else {
-                    for (Tree kid : node.kids) {
-                        evalBlock(kid, scope);
-                    }
+            case "WhileStmt" -> {
+                processWhile(node.kids[0], node.kids[1], scope);
+            }
+            case "DoWhileStmt" -> {
+                processDoWhile(node.kids[0], node.kids[1], scope);
+            }
+            case "BlockStmtsOpt", "BlockStmts", "Block" ->{
+                for (Tree kid : node.kids) {
+                    evalBlock(kid, scope);
                 }
+            }
+            default -> {
+                j0.error("the node is not implemented: "+node.sym+" "+node.tok);
             }
         }
     }
@@ -93,6 +99,25 @@ public class Interpreter {
         }else if (else_block!=null){
             if (else_block.sym.equals("IfElseStmt"))evalBlock(else_block, scope);
             else evalBlock(else_block, new SymbolTable("else_stmt", scope));
+        }
+    }
+
+    void processWhile(Tree expr, Tree block, SymbolTable scope) {
+        var condition = evalExpr(expr, scope);
+        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
+        while ((boolean) condition.value){
+            evalBlock(block, new SymbolTable("while_stmt", scope));
+            condition = evalExpr(expr, scope);
+        }
+    }
+
+    void processDoWhile(Tree block, Tree expr, SymbolTable scope) {
+        evalBlock(block, new SymbolTable("do_while_stmt", scope));
+        var condition = evalExpr(expr, scope);
+        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
+        while ((boolean) condition.value){
+            evalBlock(block, new SymbolTable("do_while_stmt", scope));
+            condition = evalExpr(expr, scope);
         }
     }
 

@@ -29,7 +29,13 @@ public class j0 {
 
     public static void main(String argv[]) throws Exception {
 //        init("texts/hello.java");
-        init("texts/expr.aqua");
+//        int i;
+//        while (true){
+//            int i;
+//
+//        }
+
+        init("texts/while.aqua");
         par = new Parser();
         //par.yydebug=true;
         yylineno = 1;
