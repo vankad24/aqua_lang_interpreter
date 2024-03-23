@@ -66,6 +66,9 @@ public class Interpreter {
                     evalBlock(kid, scope);
                 }
             }
+            case "ForStmt"->{
+                processFor(node.kids[0], node.kids[1], scope);
+            }
             default -> {
                 j0.error("the node is not implemented: "+node.sym+" "+node.tok);
             }
@@ -121,5 +124,57 @@ public class Interpreter {
         }
     }
 
+    void processFor(Tree header, Tree block, SymbolTable scope) {
+        var for_scope = new SymbolTable("for_scope", scope);
+        if (!header.sym.equals("ForNormal")&&!header.sym.equals("ForFull")) {
+            int i = 0;
+            while (true){
+                var limit = evalExpr(header, scope);
+                if (i>=(int)limit.value)break;
+                evalBlock(block, new SymbolTable("for_scope1", for_scope));
+                i++;
+            }
+        }else {
+            var var_init = header.kids[0];
+            String var_name;
+            if (var_init.sym.equals("ForVarInit")) {
+                var t = header.kids[0];
+                var_name = t.kids[0].tok.text;
+                var result = evalExpr(t.kids[1], scope);
+                if (result.type != ValueType.INTEGER) j0.error("not int expression in for init");
+                for_scope.addVar(var_name, result);
+            } else {
+                var_name = var_init.tok.text;
+                for_scope.addVar(var_name, new RuntimeValue(ValueType.INTEGER, 0));
+            }
+            var separator = header.kids[1];
+
+            boolean greater_or_equal = false;
+            if (!separator.tok.text.equals(":")) greater_or_equal = true;
+
+
+            var limit = header.kids[2];
+            boolean need_count_step = false;
+            Tree step_expr = null;
+            if (header.sym.equals("ForFull")) {
+                step_expr = header.kids[3];
+                need_count_step = true;
+            }
+            int i_value;
+            while (true) {
+                i_value = (int) for_scope.getVar(var_name).value;
+                if (greater_or_equal) {
+                    if (!(i_value <= (int) evalExpr(limit, scope).value)) break;
+                } else {
+                    if (!(i_value < (int) evalExpr(limit, scope).value)) break;
+                }
+                evalBlock(block, new SymbolTable("for_scope", for_scope));
+                int step;
+                if (need_count_step) step = (int) evalExpr(step_expr, scope).value;
+                else step = 1;
+                for_scope.setVar(var_name, PrimitiveHandler.handleInt(i_value, step, "+"));
+            }
+        }
+    }
 
 }

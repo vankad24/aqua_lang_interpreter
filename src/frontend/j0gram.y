@@ -1,4 +1,4 @@
-%token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE DO
+%token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE DO RANGESEPARATOR
 %token IDENTIFIER CLASSNAME CLASS STRING BOOL
 %token INTLIT DOUBLELIT STRINGLIT BOOLLIT NULLVAL
 %token LESSTHANOREQUAL GREATERTHANOREQUAL
@@ -24,7 +24,7 @@ ClassBodyDecls: ClassBodyDecl
 | ClassBodyDecls ClassBodyDecl {
   $$=j0.node("ClassBodyDecls",1020,$1,$2); };
 ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
-FieldDecl: Type VarDecls StmtEnd{
+FieldDecl: Type VarDecls{
   $$=j0.node("FieldDecl",1030,$1,$2); };
 Type: INT | FLOAT | BOOL | STRING | Name ;
 
@@ -64,7 +64,7 @@ BlockStmt: Stmt ;
 
 StmtEnd: ';' | ;
 
-LocalVarDeclStmt: LocalVarDecl StmtEnd ;
+LocalVarDeclStmt: LocalVarDecl;
 LocalVarDecl: Type VarDecls {
   $$=j0.node("LocalVarDecl",1140,$1,$2); };
 
@@ -72,7 +72,7 @@ Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt
       | IfStmt | IfElseStmt
       | DoWhileStmt | WhileStmt | ForStmt | LocalVarDeclStmt;
 
-ExprStmt: StmtExpr StmtEnd;
+ExprStmt: StmtExpr;
 
 StmtExpr: Assignment | MethodCall ;
 
@@ -89,11 +89,22 @@ DoWhileStmt: DO Block WHILE '(' Expr ')' {
     DO Block WHILE Expr{
         $$=j0.node("DoWhileStmt",1213,$2,$4); };
 
-ForStmt: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block {
-  $$=j0.node("ForStmt",1220,$3,$5,$7,$9); };
-ForInit: StmtExprList | LocalVarDecl | ;
+//todo FOR '(' ForHeader ')' Stmt
+ForStmt: FOR '(' ForHeader ')' Block { $$=j0.node("ForStmt",1220,$3,$5); }
+ | FOR ForHeader Block { $$=j0.node("ForStmt",1221,$2,$3); };
+
+ForHeader: ForShort | ForNormal | ForFull;
+
+ForShort: Expr;
+ForNormal: ForInit ForSeparator Expr { $$=j0.node("ForNormal",1222,$1,$2,$3); };
+ForFull: ForInit ForSeparator Expr ':' Expr { $$=j0.node("ForFull",1223,$1,$2,$3,$5); }
+
+ForInit: ForVarInit | ForVar;
+ForVar: IDENTIFIER;
+ForVarInit: IDENTIFIER '=' Expr { $$=j0.node("ForVarInit",1224,$1,$3); };
+ForSeparator: ':' | RANGESEPARATOR;
+
 ExprOpt: Expr |  ;
-ForUpdate: StmtExprList | ;
 
 StmtExprList: StmtExpr | StmtExprList ',' StmtExpr {
   $$=j0.node("StmtExprList",1230,$1,$3); };
@@ -151,7 +162,7 @@ CondAndExpr: EqExpr | CondAndExpr LOGICALAND EqExpr {
 CondOrExpr: CondAndExpr | CondOrExpr LOGICALOR CondAndExpr {
   $$=j0.node("CondOrExpr", 1360, $1,$2, $3); };
 
-Expr: CondOrExpr | Assignment ;
+Expr: CondOrExpr;
 Assignment: LeftHandSide AssignOp Expr {
 $$=j0.node("Assignment",1370, $1, $2, $3); };
 LeftHandSide: Name | FieldAccess ;

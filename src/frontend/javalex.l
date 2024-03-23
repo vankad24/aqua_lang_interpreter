@@ -48,6 +48,7 @@ id=([a-zA-Z_][a-zA-Z0-9_]*)
 "&&"                   { return j0.scan(Parser.LOGICALAND);}
 "||"                   { return j0.scan(Parser.LOGICALOR);}
 "="                    { return j0.scan(j0.ord("=")); }
+":="                   { return j0.scan(Parser.RANGESEPARATOR); }
 "+="                   { return j0.scan(Parser.INCREMENT); }
 "-="                   { return j0.scan(Parser.DECREMENT); }
 ","                    { return j0.scan(j0.ord(",")); }

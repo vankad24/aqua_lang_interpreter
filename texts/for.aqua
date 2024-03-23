@@ -1,0 +1,17 @@
+
+int num
+num = 2
+
+for (num) {
+    println("Hi!")
+}
+
+for i := 5 {
+    println(i)
+}
+
+println("")
+
+for i=3:8:2  {
+    println(i)
+}
