@@ -60,6 +60,7 @@ public class PrimitiveHandler {
             case Parser.DOUBLELIT -> new RuntimeValue(ValueType.FLOAT, Float.parseFloat(t.text));
             case Parser.INTLIT -> new RuntimeValue(ValueType.INTEGER, Integer.parseInt(t.text));
             case Parser.BOOLLIT -> new RuntimeValue(ValueType.BOOL, t.text.equals("true"));
+            case Parser.STRINGLIT -> new RuntimeValue(ValueType.STRING, t.text);
             default -> null;
         };
     }

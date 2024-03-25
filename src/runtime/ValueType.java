@@ -7,7 +7,8 @@ public class ValueType {
     public static final int FLOAT = 2;
     public static final int FUNCTION = 3;
     public static final int CLASS = 4;
-    public static final int BOOL = 4;
+    public static final int BOOL = 5;
+    public static final int STRING = 6;
 
     static int[] types_priority = new int[]{BOOL, INTEGER, FLOAT};
 
