@@ -1,5 +1,5 @@
 %token BREAK FLOAT INT ELSE FOR IF RETURN VOID WHILE DO RANGESEPARATOR
-%token IDENTIFIER CLASSNAME CLASS STRING BOOL
+%token IDENTIFIER CLASSNAME CLASS STRING BOOL FN
 %token INTLIT DOUBLELIT STRINGLIT BOOLLIT NULLVAL
 %token LESSTHANOREQUAL GREATERTHANOREQUAL
 %token ISEQUALTO NOTEQUALTO LOGICALAND LOGICALOR
@@ -23,7 +23,7 @@ ClassBody: '{' ClassBodyDecls '}' { $$=j0.node("ClassBody",1010,$2); }
 ClassBodyDecls: ClassBodyDecl
 | ClassBodyDecls ClassBodyDecl {
   $$=j0.node("ClassBodyDecls",1020,$1,$2); };
-ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
+ClassBodyDecl: FieldDecl | MethodDecl |  ;
 FieldDecl: Type VarDecls{
   $$=j0.node("FieldDecl",1030,$1,$2); };
 Type: INT | FLOAT | BOOL | STRING | Name ;
@@ -37,14 +37,19 @@ VarDecls: VarDeclarator | VarDecls ',' VarDeclarator {
 VarDeclarator: IDENTIFIER | VarDeclarator '[' ']' {
   $$=j0.node("VarDeclarator",1060,$1); };
 
-MethodReturnVal : Type | VOID ;
-MethodDecl: MethodHeader Block {
-  $$=j0.node("MethodDecl",1380,$1,$2);
- };
-MethodHeader: PUBLIC STATIC MethodReturnVal MethodDeclarator {
-  $$=j0.node("MethodHeader",1070,$3,$4); };
-MethodDeclarator: IDENTIFIER '(' FormalParmListOpt ')' {
-  $$=j0.node("MethodDeclarator",1080,$1,$3); };
+BlockOpt: Block | ;
+
+MethodDecl: FN IDENTIFIER '(' FormalParmList ')' Block { $$=j0.node("MethodDecl",1380,$2,$4,$6); }
+|FN IDENTIFIER '(' ')' Block { $$=j0.node("MethodDecl",1381,$2,$5); };
+
+ArgListOpt:  ArgList | ;
+ArgList: Expr | ArgList ',' Expr {
+  $$=j0.node("ArgList",1270,$1,$3); };
+
+MethodCall: Name '(' ArgList ')' { $$=j0.node("MethodCall",1290,$1,$3); }
+| Name '(' ')' { $$=j0.node("MethodCall",1291,$1); };
+  //| Primary '.' IDENTIFIER '(' ArgListOpt ')' {
+  //  $$=j0.node("MethodCall",1291,$1,$3,$5); };
 
 FormalParmListOpt: FormalParmList | ;
 FormalParmList: FormalParm | FormalParmList ',' FormalParm {
@@ -52,9 +57,6 @@ FormalParmList: FormalParm | FormalParmList ',' FormalParm {
 FormalParm: Type VarDeclarator {
   $$=j0.node("FormalParm",1100,$1,$2);
  };
-
-ConstructorDecl: MethodDeclarator Block {
-  $$=j0.node("ConstructorDecl",1110,$1,$2); };
 
 Block: '{' BlockStmtsOpt '}' {$$=j0.node("Block",1200,$2);};
 BlockStmtsOpt: BlockStmts | ;
@@ -69,7 +71,7 @@ LocalVarDecl: Type VarDecls {
   $$=j0.node("LocalVarDecl",1140,$1,$2); };
 
 Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt
-      | IfStmt | IfElseStmt
+      | IfStmt | IfElseStmt | MethodDecl
       | DoWhileStmt | WhileStmt | ForStmt | LocalVarDeclStmt;
 
 ExprStmt: StmtExpr;
@@ -90,6 +92,23 @@ DoWhileStmt: DO Block WHILE '(' Expr ')' {
         $$=j0.node("DoWhileStmt",1213,$2,$4); };
 
 //todo FOR '(' ForHeader ')' Stmt
+/*
+ForStmt: FOR '(' ForHeader ')' Stmt { $$=j0.node("ForStmt",1220,$3,$5); }
+ | FOR ForHeader Block { $$=j0.node("ForStmt",1221,$2,$3); };
+
+ForHeader: ForInit ForLimit ForStep;
+
+ForInit: IDENTIFIER '=' Expr ForSeparator{ $$=j0.node("ForInit",1221,$1,$3,$4); }
+ | IDENTIFIER ForSeparator{ $$=j0.node("ForInit",1222,$1,$2); }
+ | { $$=j0.node("ForInit",1223); };
+
+ForLimit: Expr;
+
+ForStep: ':' Expr { $$=j0.node("ForStep",1224,$2); }
+| { $$=j0.node("ForStep",1225); };
+
+*/
+
 ForStmt: FOR '(' ForHeader ')' Block { $$=j0.node("ForStmt",1220,$3,$5); }
  | FOR ForHeader Block { $$=j0.node("ForStmt",1221,$2,$3); };
 
@@ -118,17 +137,8 @@ Primary:  Literal | FieldAccess | MethodCall | '(' Expr ')' {
   $$=$2;};
 Literal: INTLIT	| DOUBLELIT | BOOLLIT | STRINGLIT | NULLVAL ;
 
-ArgList: Expr | ArgList ',' Expr {
-  $$=j0.node("ArgList",1270,$1,$3); };
 FieldAccess: Primary '.' IDENTIFIER {
   $$=j0.node("FieldAccess",1280,$1,$3); };
-
-ArgListOpt:  ArgList | ;
-MethodCall: Name '(' ArgListOpt ')' {
-  $$=j0.node("MethodCall",1290,$1,$3); }
-  | Primary '.' IDENTIFIER '(' ArgListOpt ')' {
-    $$=j0.node("MethodCall",1291,$1,$3,$5); }
-	;
 
 PostFixExpr: Primary | Name ;
 UnaryExpr: '-' UnaryExpr {

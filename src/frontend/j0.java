@@ -35,7 +35,7 @@ public class j0 {
 //
 //        }
 
-        init("texts/for.aqua");
+        init("texts/func.aqua");
         par = new Parser();
         //par.yydebug=true;
         yylineno = 1;

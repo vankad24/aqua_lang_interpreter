@@ -35,7 +35,7 @@ public class SymbolTable {
     public void setVar(String name, RuntimeValue value){
         var current_value = variables.get(name);
         if (current_value!=null){
-            if (current_value.value!=null && current_value.type!=value.type)
+            if ( current_value.type!=value.type)
                 j0.semerror("Assign type mismatch for "+ name);
             variables.put(name, value);
         } else if (parent == null) j0.semerror("Unknown name "+ name);

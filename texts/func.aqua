@@ -1,0 +1,15 @@
+fn hello(){
+    println("Hello there!")
+}
+
+fn bar(int a, float b){
+    println(a+2,a*2, a*a)
+    println(b/2, b+0.5)
+}
+
+hello()
+
+println()
+println()
+
+bar(12, 1.4)

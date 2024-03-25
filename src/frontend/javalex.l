@@ -22,6 +22,7 @@ id=([a-zA-Z_][a-zA-Z0-9_]*)
 "true"                 { return j0.scan(Parser.BOOLLIT); }
 "bool"                 { return j0.scan(Parser.BOOL); }
 "void"                 { return j0.scan(Parser.VOID); }
+"fn"                   { return j0.scan(Parser.FN); }
 "while"                { return j0.scan(Parser.WHILE); }
 "do"                   { return j0.scan(Parser.DO); }
 "class"                { return j0.scan(Parser.CLASS); }

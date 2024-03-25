@@ -14,13 +14,18 @@ public class Interpreter {
         System.out.println("semantic");
     }
 
+    static String[] build_in_functions = {"print", "println"};
 
-    public void interpret(Tree root) {
+    static public void interpret(Tree root) {
         SymbolTable global_scope = new SymbolTable("global", null);
+        for (var name : build_in_functions) {
+            global_scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType()));
+        }
         evalBlock(root, global_scope);
     }
 
-    public void evalBlock(Tree node, SymbolTable scope) {
+    public static void evalBlock(Tree node, SymbolTable scope) {
+        if (node==null)return;
         switch (node.sym) {
             case "LocalVarDecl" -> {
                 var type = node.kids[0].tok;
@@ -32,22 +37,27 @@ public class Interpreter {
                 var result = evalExpr(node.kids[2], scope);
                 scope.setVar(var_name, result);
             }
-            case "MethodCall" -> {
-                if (node.kids[0].tok.text.equals("println")) {
-                    Token arg = node.kids[1].tok;
-                    switch (arg.code) {
-                        case Parser.IDENTIFIER -> {
-                            String var_name = arg.text;
 
-                            System.out.println(scope.getVar(var_name).value);
-                        }
-                        case Parser.STRINGLIT -> {
-                            System.out.println(arg.text);
-                        }
-                    }
+            case "MethodDecl" -> {
+                String name = node.kids[0].tok.text;
+                if (!scope.name.equals("global"))j0.error("cannot declare function "+name+" not in global scope");
+                Tree params;
+                Tree block;
+                if (node.kids.length > 2){
+                    params = node.kids[1];
+                    block = node.kids[2];
                 } else {
-                    System.out.println("Unknown function " + node.kids[0].tok.text);
+                    block = node.kids[1];
+                    params = null;
                 }
+                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params, block)));
+            }
+            case "MethodCall" -> {
+                String name = node.kids[0].tok.text;
+                Tree args;
+                if (node.kids.length > 1)args = node.kids[1];
+                else args = null;
+                FunctionHandler.eval(name, args, scope);
             }
             case "IfStmt" -> {
                 processIfElse(node.kids[0], node.kids[1], null, scope);
@@ -75,7 +85,7 @@ public class Interpreter {
         }
     }
 
-    public RuntimeValue evalExpr(Tree node, SymbolTable scope){
+    public static RuntimeValue evalExpr(Tree node, SymbolTable scope){
         switch (node.sym){
             case "token"->{
                 Token t = node.tok;
@@ -94,7 +104,7 @@ public class Interpreter {
         return null;
     }
 
-    void processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope){
+    static void processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope){
         var condition = evalExpr(condition_expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the if stmt");
         if ((boolean) condition.value){
@@ -105,7 +115,7 @@ public class Interpreter {
         }
     }
 
-    void processWhile(Tree expr, Tree block, SymbolTable scope) {
+    static void processWhile(Tree expr, Tree block, SymbolTable scope) {
         var condition = evalExpr(expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
         while ((boolean) condition.value){
@@ -114,7 +124,7 @@ public class Interpreter {
         }
     }
 
-    void processDoWhile(Tree block, Tree expr, SymbolTable scope) {
+    static void processDoWhile(Tree block, Tree expr, SymbolTable scope) {
         evalBlock(block, new SymbolTable("do_while_stmt", scope));
         var condition = evalExpr(expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
@@ -124,7 +134,7 @@ public class Interpreter {
         }
     }
 
-    void processFor(Tree header, Tree block, SymbolTable scope) {
+    static void processFor(Tree header, Tree block, SymbolTable scope) {
         var for_scope = new SymbolTable("for_scope", scope);
         if (!header.sym.equals("ForNormal")&&!header.sym.equals("ForFull")) {
             int i = 0;

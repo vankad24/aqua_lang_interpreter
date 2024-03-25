@@ -89,7 +89,8 @@ public class Tree {
                     " (" + rule + "): " + nkids);
         }
         for (i = 0; i < nkids; i++)
-            kids[i].print(level + 1);
+            if (kids[i]!=null)
+                kids[i].print(level + 1);
     }
 
     public void print() {
