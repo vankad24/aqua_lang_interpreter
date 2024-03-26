@@ -26,7 +26,7 @@ import static frontend.yyerror.yyerror;
 public class j0 {
     public static Yylex yylexer;
     public static Parser par;
-
+    
     public static void main(String argv[]) throws Exception {
 //        init("texts/hello.java");
 //        int i;
@@ -34,7 +34,6 @@ public class j0 {
 //            int i;
 //
 //        }
-
         init("texts/func.aqua");
         par = new Parser();
         //par.yydebug=true;

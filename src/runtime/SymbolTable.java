@@ -8,11 +8,19 @@ public class SymbolTable {
     String name;
     SymbolTable parent;
     HashMap<String, RuntimeValue> variables;
+    boolean is_inside_function;
 
+    public SymbolTable(String name){
+        this.name = name;
+        this.parent = null;
+        variables = new HashMap<>();
+        is_inside_function = false;
+    }
     public SymbolTable(String name, SymbolTable parent){
         this.name = name;
         this.parent = parent;
         variables = new HashMap<>();
+        is_inside_function = parent.is_inside_function;
     }
 
     public RuntimeValue getVar(String name){

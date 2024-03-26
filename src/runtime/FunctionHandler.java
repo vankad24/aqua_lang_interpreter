@@ -7,13 +7,13 @@ import java.util.ArrayList;
 
 public class FunctionHandler {
 
-    public static void eval(String name, Tree args, SymbolTable scope){
+    public static RuntimeValue eval(String name, Tree args, SymbolTable scope){
         var runtimeValue = scope.getVar(name);
         if (runtimeValue.type != ValueType.FUNCTION) j0.error(name+ " is not a function");
 
         var func = (FunctionType) runtimeValue.value;
 
-        if (func.is_build_in)evalBuildin(name, args, scope);
+        if (func.is_build_in)return evalBuildin(name, args, scope);
         else {
             var args_list = new ArrayList<Tree>();
             addArgsToArrayList(args, args_list);
@@ -23,20 +23,21 @@ public class FunctionHandler {
 
             if (params_list.size()!=args_list.size())j0.error("function "+name+": expected "+params_list.size()+" arguments, got "+args_list.size());
 
-            var local_scope = new SymbolTable("function", scope);
+            var func_scope = new SymbolTable("function", scope);
+            func_scope.is_inside_function = true;
             for (int i = 0; i <args_list.size(); i++) {
                 var varInit = params_list.get(i);
                 var type = varInit.kids[0].tok;
                 var var_name = varInit.kids[1].tok.text;
                 var value = Interpreter.evalExpr(args_list.get(i), scope);
-                local_scope.addVar(var_name, new RuntimeValue(PrimitiveHandler.tokenToType(type)));
-                local_scope.setVar(var_name, value);
+                func_scope.addVar(var_name, new RuntimeValue(PrimitiveHandler.tokenToType(type)));
+                func_scope.setVar(var_name, value);
             }
-            Interpreter.evalBlock(func.block, local_scope);
+            return Interpreter.evalBlock(func.block, func_scope);
         }
     }
 
-    public static void evalBuildin(String name, Tree args, SymbolTable scope){
+    public static RuntimeValue evalBuildin(String name, Tree args, SymbolTable scope){
         var args_list = new ArrayList<Tree>();
         addArgsToArrayList(args, args_list);
 
@@ -54,6 +55,7 @@ public class FunctionHandler {
                 j0.error(name + " not yet implemented");
             }
         }
+        return null;
     }
 
     static void addArgsToArrayList(Tree arg, ArrayList<Tree> elements){

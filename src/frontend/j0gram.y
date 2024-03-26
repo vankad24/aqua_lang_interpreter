@@ -130,8 +130,8 @@ StmtExprList: StmtExpr | StmtExprList ',' StmtExpr {
 
 BreakStmt: BREAK StmtEnd | BREAK IDENTIFIER StmtEnd {
   $$=j0.node("BreakStmt",1240,$2); };
-ReturnStmt: RETURN ExprOpt StmtEnd {
-  $$=j0.node("ReturnStmt",1250,$2); };
+ReturnStmt: RETURN Expr { $$=j0.node("ReturnStmt",1250,$2); }
+  |RETURN { $$=j0.node("ReturnStmt",1251);};
 
 Primary:  Literal | FieldAccess | MethodCall | '(' Expr ')' {
   $$=$2;};

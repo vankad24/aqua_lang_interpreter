@@ -17,15 +17,15 @@ public class Interpreter {
     static String[] build_in_functions = {"print", "println"};
 
     static public void interpret(Tree root) {
-        SymbolTable global_scope = new SymbolTable("global", null);
+        SymbolTable global_scope = new SymbolTable("global");
         for (var name : build_in_functions) {
             global_scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType()));
         }
         evalBlock(root, global_scope);
     }
 
-    public static void evalBlock(Tree node, SymbolTable scope) {
-        if (node==null)return;
+    public static RuntimeValue evalBlock(Tree node, SymbolTable scope) {
+        if (node==null)return null;
         switch (node.sym) {
             case "LocalVarDecl" -> {
                 var type = node.kids[0].tok;
@@ -53,36 +53,39 @@ public class Interpreter {
                 scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params, block)));
             }
             case "MethodCall" -> {
-                String name = node.kids[0].tok.text;
-                Tree args;
-                if (node.kids.length > 1)args = node.kids[1];
-                else args = null;
-                FunctionHandler.eval(name, args, scope);
+                processMethodCall(node, scope);
             }
             case "IfStmt" -> {
-                processIfElse(node.kids[0], node.kids[1], null, scope);
+                return processIfElse(node.kids[0], node.kids[1], null, scope);
             }
             case "IfElseStmt" -> {
-                processIfElse(node.kids[0], node.kids[1], node.kids[2], scope);
+                return processIfElse(node.kids[0], node.kids[1], node.kids[2], scope);
             }
             case "WhileStmt" -> {
-                processWhile(node.kids[0], node.kids[1], scope);
+                return processWhile(node.kids[0], node.kids[1], scope);
             }
             case "DoWhileStmt" -> {
-                processDoWhile(node.kids[0], node.kids[1], scope);
+                return processDoWhile(node.kids[0], node.kids[1], scope);
             }
             case "BlockStmtsOpt", "BlockStmts", "Block" ->{
                 for (Tree kid : node.kids) {
-                    evalBlock(kid, scope);
+                    var result = evalBlock(kid, scope);
+                    if (result!=null)return result;
                 }
             }
             case "ForStmt"->{
-                processFor(node.kids[0], node.kids[1], scope);
+                return processFor(node.kids[0], node.kids[1], scope);
+            }
+            case "ReturnStmt"->{
+                if (!scope.is_inside_function)j0.error("return outside function");
+                if (node.kids.length==0)return new RuntimeValue(ValueType.NONE);
+                return evalExpr(node.kids[0], scope);
             }
             default -> {
                 j0.error("the node is not implemented: "+node.sym+" "+node.tok);
             }
         }
+        return null;
     }
 
     public static RuntimeValue evalExpr(Tree node, SymbolTable scope){
@@ -92,6 +95,11 @@ public class Interpreter {
                 if (t.code == Parser.IDENTIFIER)
                     return scope.getVar(t.text);
                 return PrimitiveHandler.literalToValue(node.tok);
+            }
+            case "MethodCall"->{
+                var result = processMethodCall(node, scope);
+                if (result == null || result.type == ValueType.NONE)j0.error("function "+node.kids[0].tok.text+" does not return a value");
+                return result;
             }
             case "AddExpr", "MulExpr","RelExpr","EqExpr","CondAndExpr","CondOrExpr"->{
                 var left = evalExpr(node.kids[0], scope);
@@ -104,44 +112,51 @@ public class Interpreter {
         return null;
     }
 
-    static void processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope){
+    static RuntimeValue processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope){
         var condition = evalExpr(condition_expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the if stmt");
         if ((boolean) condition.value){
-            evalBlock(if_block, new SymbolTable("if_stmt", scope));
+            return evalBlock(if_block, new SymbolTable("if_stmt", scope));
         }else if (else_block!=null){
-            if (else_block.sym.equals("IfElseStmt"))evalBlock(else_block, scope);
-            else evalBlock(else_block, new SymbolTable("else_stmt", scope));
+            if (else_block.sym.equals("IfElseStmt"))return evalBlock(else_block, scope);
+            else return evalBlock(else_block, new SymbolTable("else_stmt", scope));
         }
+        return null;
     }
 
-    static void processWhile(Tree expr, Tree block, SymbolTable scope) {
+    static RuntimeValue processWhile(Tree expr, Tree block, SymbolTable scope) {
         var condition = evalExpr(expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
         while ((boolean) condition.value){
-            evalBlock(block, new SymbolTable("while_stmt", scope));
+            var result = evalBlock(block, new SymbolTable("while_stmt", scope));
+            if (result!=null)return result;
             condition = evalExpr(expr, scope);
         }
+        return null;
     }
 
-    static void processDoWhile(Tree block, Tree expr, SymbolTable scope) {
-        evalBlock(block, new SymbolTable("do_while_stmt", scope));
+    static RuntimeValue processDoWhile(Tree block, Tree expr, SymbolTable scope) {
+        var r = evalBlock(block, new SymbolTable("do_while_stmt", scope));
+        if (r!=null)return r;
         var condition = evalExpr(expr, scope);
         if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
         while ((boolean) condition.value){
-            evalBlock(block, new SymbolTable("do_while_stmt", scope));
+            r = evalBlock(block, new SymbolTable("do_while_stmt", scope));
+            if (r!=null)return r;
             condition = evalExpr(expr, scope);
         }
+        return null;
     }
 
-    static void processFor(Tree header, Tree block, SymbolTable scope) {
+    static RuntimeValue processFor(Tree header, Tree block, SymbolTable scope) {
         var for_scope = new SymbolTable("for_scope", scope);
         if (!header.sym.equals("ForNormal")&&!header.sym.equals("ForFull")) {
             int i = 0;
             while (true){
                 var limit = evalExpr(header, scope);
                 if (i>=(int)limit.value)break;
-                evalBlock(block, new SymbolTable("for_scope1", for_scope));
+                var r =evalBlock(block, new SymbolTable("for_scope1", for_scope));
+                if (r!=null)return r;
                 i++;
             }
         }else {
@@ -178,13 +193,23 @@ public class Interpreter {
                 } else {
                     if (!(i_value < (int) evalExpr(limit, scope).value)) break;
                 }
-                evalBlock(block, new SymbolTable("for_scope", for_scope));
+                var r = evalBlock(block, new SymbolTable("for_scope", for_scope));
+                if (r!=null)return r;
                 int step;
                 if (need_count_step) step = (int) evalExpr(step_expr, scope).value;
                 else step = 1;
                 for_scope.setVar(var_name, PrimitiveHandler.handleInt(i_value, step, "+"));
             }
         }
+        return null;
+    }
+
+    static RuntimeValue processMethodCall(Tree node, SymbolTable scope){
+        String name = node.kids[0].tok.text;
+        Tree args;
+        if (node.kids.length > 1)args = node.kids[1];
+        else args = null;
+        return FunctionHandler.eval(name, args, scope);
     }
 
 }

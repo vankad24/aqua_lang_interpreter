@@ -2,14 +2,16 @@ fn hello(){
     println("Hello there!")
 }
 
-fn bar(int a, float b){
-    println(a+2,a*2, a*a)
-    println(b/2, b+0.5)
+fn foo(int a, int b){
+    if a > 5{
+        return a+b
+    }
+    return a-b
 }
 
 hello()
 
-println()
-println()
 
-bar(12, 1.4)
+int r
+r = 2 + foo(2, 7)
+println(r)
