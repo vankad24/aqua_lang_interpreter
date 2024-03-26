@@ -1,0 +1,79 @@
+%YAML 1.2
+---
+# https://www.sublimetext.com/docs/syntax.html
+
+name: Aqua
+scope: source.aqua
+version: 1
+
+file_extensions:
+  - aqua
+
+variables:
+  identifier_continue: '[[:alnum:]_]'
+  identifier: '[[:alpha:]_]{{identifier_continue}}*\b'
+  path: '({{identifier}}[ ]*\.[ ]*)*{{identifier}}'
+
+contexts:
+  main:
+    - match: ^\s*(fn)\b
+      scope: meta.function.aqua
+      captures:
+        1: keyword.declaration.function.aqua
+      push:
+        - function-definition-name
+
+    - match: \b(if|else|while|for|return|fn|do|break|continue)\b
+      scope: keyword.control.aqua
+    
+    - match: \b(int|float|bool)\b
+      scope: storage.type.aqua
+
+    - match: (?:false|true)
+      scope: constant.language.boolean.aqua
+
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character
+    - match: '"'
+      scope: punctuation.definition.string.begin.aqua
+      push: double_quoted_string
+
+    # Comments
+    - match: '//.*?$'
+      scope: comment.line.double-slash.aqua
+    - match: '/\*(.|\n)*?\*/'
+      scope: comment.block.aqua
+
+    # Operators
+    - match: (?:\+|-|\*|\/|\=|<|>|<\=|>\=|!\=|\=\=)
+      scope: keyword.operator.aqua
+
+    # Numbers
+    - match: '\b(-)?[0-9]+(.[0-9]+)?\b'
+      scope: constant.numeric.aqua
+
+    # Builtin functions
+    - match: \b(print|println|readInt|readFloat)\b
+      scope: support.function.builtin.aqua
+
+    # Function call
+    - match: '{{identifier}}\s*\('
+      scope: variable.function.aqua
+
+  function-definition-name:
+    - match: '{{identifier}}'
+      scope: entity.name.function.aqua
+      pop: 1
+
+  function-names:
+    - match: '{{identifier}}'
+      scope: variable.function.python
+
+  double_quoted_string:
+    - meta_scope: string.quoted.double.aqua
+    - match: '\\.'
+      scope: constant.character.escape.aqua
+    - match: '"'
+      scope: punctuation.definition.string.end.aqua
+      pop: true
+
