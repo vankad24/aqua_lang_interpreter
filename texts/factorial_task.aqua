@@ -1,0 +1,9 @@
+fn factorial(int n){
+    if n == 2 {
+        return 2
+    }
+    return n * factorial(n-1)
+}
+
+println("Enter a number to calculate factorial:")
+println(factorial(readInt()))

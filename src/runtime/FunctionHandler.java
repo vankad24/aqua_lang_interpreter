@@ -4,8 +4,10 @@ import frontend.Tree;
 import frontend.j0;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class FunctionHandler {
+    static Scanner sc = new Scanner(System.in);
 
     public static RuntimeValue eval(String name, Tree args, SymbolTable scope){
         var runtimeValue = scope.getVar(name);
@@ -13,7 +15,7 @@ public class FunctionHandler {
 
         var func = (FunctionType) runtimeValue.value;
 
-        if (func.is_build_in)return evalBuildin(name, args, scope);
+        if (func.is_build_in)return evalBuiltin(name, args, scope);
         else {
             var args_list = new ArrayList<Tree>();
             addArgsToArrayList(args, args_list);
@@ -21,7 +23,7 @@ public class FunctionHandler {
             var params_list = new ArrayList<Tree>();
             addArgsToArrayList(func.params, params_list);
 
-            if (params_list.size()!=args_list.size())j0.error("function "+name+": expected "+params_list.size()+" arguments, got "+args_list.size());
+            checkArgsNumber(name, params_list.size(), args_list.size());
 
             var func_scope = new SymbolTable("function", scope);
             func_scope.is_inside_function = true;
@@ -37,7 +39,7 @@ public class FunctionHandler {
         }
     }
 
-    public static RuntimeValue evalBuildin(String name, Tree args, SymbolTable scope){
+    public static RuntimeValue evalBuiltin(String name, Tree args, SymbolTable scope){
         var args_list = new ArrayList<Tree>();
         addArgsToArrayList(args, args_list);
 
@@ -50,6 +52,14 @@ public class FunctionHandler {
                 }
 
                 if (name.equals("println")) System.out.println();
+            }
+            case "readInt"->{
+                checkArgsNumber(name, 0, args_list.size());
+                return new RuntimeValue(ValueType.INTEGER, sc.nextInt());
+            }
+            case "readFloat"->{
+                checkArgsNumber(name, 0, args_list.size());
+                return new RuntimeValue(ValueType.FLOAT, sc.nextFloat());
             }
             default -> {
                 j0.error(name + " not yet implemented");
@@ -64,6 +74,10 @@ public class FunctionHandler {
                 for (var node : arg.kids) addArgsToArrayList(node, elements);
             } else elements.add(arg);
         }
+    }
+
+    static void checkArgsNumber(String fun_name, int params, int args){
+        if (params!=args)j0.error("function "+fun_name+": expected "+params+" arguments, but got "+args);
     }
 
 }

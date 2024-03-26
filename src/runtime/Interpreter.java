@@ -14,11 +14,11 @@ public class Interpreter {
         System.out.println("semantic");
     }
 
-    static String[] build_in_functions = {"print", "println"};
+    static String[] built_in_functions = {"print", "println", "readInt", "readFloat"};
 
     static public void interpret(Tree root) {
         SymbolTable global_scope = new SymbolTable("global");
-        for (var name : build_in_functions) {
+        for (var name : built_in_functions) {
             global_scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType()));
         }
         evalBlock(root, global_scope);
