@@ -9,6 +9,14 @@ import java.util.Scanner;
 public class FunctionHandler {
     static Scanner sc = new Scanner(System.in);
 
+    static Object[][] built_in_functions = {{"print", ValueType.NONE}, {"println", ValueType.NONE}, {"readInt",ValueType.INTEGER}, {"readFloat",ValueType.FLOAT } };
+
+    public static void initBuiltin(SymbolTable scope){
+        for (var pair : built_in_functions) {
+            scope.addVar(((String) pair[0]), new RuntimeValue(ValueType.FUNCTION, new FunctionType((int) pair[1])));
+        }
+    }
+
     public static RuntimeValue eval(String name, Tree args, SymbolTable scope){
         var runtimeValue = scope.getVar(name);
         if (runtimeValue.type != ValueType.FUNCTION) j0.error(name+ " is not a function");

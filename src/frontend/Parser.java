@@ -968,244 +968,242 @@ case 1:
 //#line 12 "j0gram.y"
 {
     yyval=j0.node("BlockStmtsOpt",1024,val_peek(0));
-    j0.print(yyval);
     j0.process((Tree) yyval.obj);
 }
 break;
 case 2:
-//#line 17 "j0gram.y"
+//#line 16 "j0gram.y"
 {
   yyval=j0.node("ClassDecl",1000,val_peek(1),val_peek(0));
-  j0.print(yyval);
  }
 break;
 case 3:
-//#line 21 "j0gram.y"
+//#line 19 "j0gram.y"
 { yyval=j0.node("ClassBody",1010,val_peek(1)); }
 break;
 case 4:
-//#line 22 "j0gram.y"
+//#line 20 "j0gram.y"
 { yyval=j0.node("ClassBody",1011); }
 break;
 case 6:
-//#line 24 "j0gram.y"
+//#line 22 "j0gram.y"
 {
   yyval=j0.node("ClassBodyDecls",1020,val_peek(1),val_peek(0)); }
 break;
 case 10:
-//#line 27 "j0gram.y"
+//#line 25 "j0gram.y"
 {
   yyval=j0.node("FieldDecl",1030,val_peek(1),val_peek(0)); }
 break;
 case 18:
-//#line 32 "j0gram.y"
+//#line 30 "j0gram.y"
 {
   yyval=j0.node("QualifiedName",1040,val_peek(2),val_peek(0));}
 break;
 case 20:
-//#line 35 "j0gram.y"
+//#line 33 "j0gram.y"
 {
   yyval=j0.node("VarDecls",1050,val_peek(2),val_peek(0)); }
 break;
 case 22:
-//#line 37 "j0gram.y"
+//#line 35 "j0gram.y"
 {
   yyval=j0.node("VarDeclarator",1060,val_peek(2)); }
 break;
 case 25:
-//#line 42 "j0gram.y"
+//#line 40 "j0gram.y"
 { yyval=j0.node("MethodDecl",1380,val_peek(4),val_peek(2),val_peek(0)); }
 break;
 case 26:
-//#line 43 "j0gram.y"
+//#line 41 "j0gram.y"
 { yyval=j0.node("MethodDecl",1381,val_peek(3),val_peek(0)); }
 break;
 case 30:
-//#line 46 "j0gram.y"
+//#line 44 "j0gram.y"
 {
   yyval=j0.node("ArgList",1270,val_peek(2),val_peek(0)); }
 break;
 case 31:
-//#line 49 "j0gram.y"
+//#line 47 "j0gram.y"
 { yyval=j0.node("MethodCall",1290,val_peek(3),val_peek(1)); }
 break;
 case 32:
-//#line 50 "j0gram.y"
+//#line 48 "j0gram.y"
 { yyval=j0.node("MethodCall",1291,val_peek(2)); }
 break;
 case 36:
-//#line 55 "j0gram.y"
+//#line 53 "j0gram.y"
 {
   yyval=j0.node("FormalParmList",1090,val_peek(2),val_peek(0)); }
 break;
 case 37:
-//#line 57 "j0gram.y"
+//#line 55 "j0gram.y"
 {
   yyval=j0.node("FormalParm",1100,val_peek(1),val_peek(0));
  }
 break;
 case 38:
-//#line 61 "j0gram.y"
+//#line 59 "j0gram.y"
 {yyval=j0.node("Block",1200,val_peek(1));}
 break;
 case 42:
-//#line 63 "j0gram.y"
+//#line 61 "j0gram.y"
 {
   yyval=j0.node("BlockStmts",1130,val_peek(1),val_peek(0)); }
 break;
 case 47:
-//#line 70 "j0gram.y"
+//#line 68 "j0gram.y"
 {
   yyval=j0.node("LocalVarDecl",1140,val_peek(1),val_peek(0)); }
 break;
 case 63:
-//#line 81 "j0gram.y"
+//#line 79 "j0gram.y"
 { yyval=j0.node("IfStmt",1150,val_peek(1),val_peek(0)); }
 break;
 case 64:
-//#line 82 "j0gram.y"
+//#line 80 "j0gram.y"
 { yyval=j0.node("IfStmt",1151,val_peek(2),val_peek(0)); }
 break;
 case 65:
-//#line 83 "j0gram.y"
+//#line 81 "j0gram.y"
 { yyval=j0.node("IfElseStmt",1160,val_peek(4),val_peek(2),val_peek(0)); }
 break;
 case 66:
-//#line 84 "j0gram.y"
+//#line 82 "j0gram.y"
 { yyval=j0.node("IfElseStmt",1161,val_peek(3),val_peek(2),val_peek(0)); }
 break;
 case 67:
-//#line 86 "j0gram.y"
+//#line 84 "j0gram.y"
 { yyval=j0.node("WhileStmt",1210,val_peek(2),val_peek(0)); }
 break;
 case 68:
-//#line 87 "j0gram.y"
+//#line 85 "j0gram.y"
 { yyval=j0.node("WhileStmt",1211,val_peek(1),val_peek(0)); }
 break;
 case 69:
-//#line 89 "j0gram.y"
+//#line 87 "j0gram.y"
 {
-    yyval=j0.node("DoWhileStmt",1212,val_peek(4),val_peek(1)); }
+    yyval=j0.node("DoWhileStmt",1212,val_peek(1),val_peek(4)); }
 break;
 case 70:
-//#line 91 "j0gram.y"
+//#line 89 "j0gram.y"
 {
-        yyval=j0.node("DoWhileStmt",1213,val_peek(2),val_peek(0)); }
+        yyval=j0.node("DoWhileStmt",1213,val_peek(0),val_peek(2)); }
 break;
 case 71:
-//#line 112 "j0gram.y"
+//#line 110 "j0gram.y"
 { yyval=j0.node("ForStmt",1220,val_peek(2),val_peek(0)); }
 break;
 case 72:
-//#line 113 "j0gram.y"
+//#line 111 "j0gram.y"
 { yyval=j0.node("ForStmt",1221,val_peek(1),val_peek(0)); }
 break;
 case 77:
-//#line 118 "j0gram.y"
+//#line 116 "j0gram.y"
 { yyval=j0.node("ForNormal",1222,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 78:
-//#line 119 "j0gram.y"
+//#line 117 "j0gram.y"
 { yyval=j0.node("ForFull",1223,val_peek(4),val_peek(3),val_peek(2),val_peek(0)); }
 break;
 case 82:
-//#line 123 "j0gram.y"
+//#line 121 "j0gram.y"
 { yyval=j0.node("ForVarInit",1224,val_peek(2),val_peek(0)); }
 break;
 case 88:
-//#line 128 "j0gram.y"
+//#line 126 "j0gram.y"
 {
   yyval=j0.node("StmtExprList",1230,val_peek(2),val_peek(0)); }
 break;
 case 90:
-//#line 131 "j0gram.y"
+//#line 129 "j0gram.y"
 {
   yyval=j0.node("BreakStmt",1240,val_peek(1)); }
 break;
 case 91:
-//#line 133 "j0gram.y"
+//#line 131 "j0gram.y"
 { yyval=j0.node("ReturnStmt",1250,val_peek(0)); }
 break;
 case 92:
-//#line 134 "j0gram.y"
+//#line 132 "j0gram.y"
 { yyval=j0.node("ReturnStmt",1251);}
 break;
 case 96:
-//#line 136 "j0gram.y"
+//#line 134 "j0gram.y"
 {
   yyval=val_peek(1);}
 break;
 case 102:
-//#line 140 "j0gram.y"
+//#line 138 "j0gram.y"
 {
   yyval=j0.node("FieldAccess",1280,val_peek(2),val_peek(0)); }
 break;
 case 105:
-//#line 144 "j0gram.y"
+//#line 142 "j0gram.y"
 {
   yyval=j0.node("UnaryExpr",1300,val_peek(1),val_peek(0)); }
 break;
 case 106:
-//#line 146 "j0gram.y"
+//#line 144 "j0gram.y"
 {
   yyval=j0.node("UnaryExpr",1301,val_peek(1),val_peek(0)); }
 break;
 case 109:
-//#line 150 "j0gram.y"
+//#line 148 "j0gram.y"
 {
       yyval=j0.node("MulExpr",1310,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 110:
-//#line 152 "j0gram.y"
+//#line 150 "j0gram.y"
 {
       yyval=j0.node("MulExpr",1311,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 111:
-//#line 154 "j0gram.y"
+//#line 152 "j0gram.y"
 {
       yyval=j0.node("MulExpr",1312,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 113:
-//#line 157 "j0gram.y"
+//#line 155 "j0gram.y"
 {
       yyval=j0.node("AddExpr",1320,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 114:
-//#line 159 "j0gram.y"
+//#line 157 "j0gram.y"
 {
       yyval=j0.node("AddExpr",1321,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 120:
-//#line 162 "j0gram.y"
+//#line 160 "j0gram.y"
 {
   yyval=j0.node("RelExpr",1330,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 122:
-//#line 166 "j0gram.y"
+//#line 164 "j0gram.y"
 {
   yyval=j0.node("EqExpr",1340,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 123:
-//#line 168 "j0gram.y"
+//#line 166 "j0gram.y"
 {
   yyval=j0.node("EqExpr",1341,val_peek(2),val_peek(1),val_peek(0)); }
 break;
 case 125:
-//#line 170 "j0gram.y"
+//#line 168 "j0gram.y"
 {
   yyval=j0.node("CondAndExpr", 1350, val_peek(2),val_peek(1), val_peek(0)); }
 break;
 case 127:
-//#line 172 "j0gram.y"
+//#line 170 "j0gram.y"
 {
   yyval=j0.node("CondOrExpr", 1360, val_peek(2),val_peek(1), val_peek(0)); }
 break;
 case 129:
-//#line 176 "j0gram.y"
+//#line 174 "j0gram.y"
 {
 yyval=j0.node("Assignment",1370, val_peek(2), val_peek(1), val_peek(0)); }
 break;
-//#line 1131 "Parser.java"
+//#line 1129 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

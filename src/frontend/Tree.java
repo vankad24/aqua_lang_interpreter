@@ -1,5 +1,7 @@
 package frontend;
 
+import runtime.SymbolTable;
+
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,6 +13,7 @@ public class Tree {
     public int nkids;
     public Token tok;
     public Tree[] kids;
+    public SymbolTable scope;
 
     public String escape(String s) {
         if (s.charAt(0) == '\"')

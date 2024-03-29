@@ -6,6 +6,17 @@ import frontend.j0;
 
 public class PrimitiveHandler {
 
+    public static RuntimeValue analyzeOperator(RuntimeValue v1, String op, RuntimeValue v2) {
+        int new_type = determineResultType(v1, v2);
+        // todo calc return type and add a cast node
+        return switch (new_type) {
+            case ValueType.FLOAT -> processOperator(new RuntimeValue(new_type, 1f),op,new RuntimeValue(new_type, 1f));
+            case ValueType.INTEGER -> processOperator(new RuntimeValue(new_type, 1),op,new RuntimeValue(new_type, 1));
+            case ValueType.BOOL -> processOperator(new RuntimeValue(new_type, true),op,new RuntimeValue(new_type, true));
+            default -> null;
+        };
+    }
+
     public static RuntimeValue processOperator(RuntimeValue v1, String op, RuntimeValue v2) {
         int new_type = determineResultType(v1, v2);
         v1 = castToType(v1, new_type);

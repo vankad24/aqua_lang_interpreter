@@ -22,10 +22,15 @@ import static frontend.yyerror.yyerror;
 ```
 
 ..\..\Graphviz\bin\dot.exe -Tsvg ../../texts/hello.java.dot > ../../hello.svg
+
+// jpg почему-то не работает. Вот, можно запустить для тестов:
+echo 'digraph { a -> b }' | ..\..\Graphviz\bin\dot.exe -Tpng > output.png
+
 * */
 public class j0 {
     public static Yylex yylexer;
     public static Parser par;
+    static boolean debug = true;
 
     public static void main(String argv[]) throws Exception {
 //        init("texts/hello.java");
@@ -34,13 +39,13 @@ public class j0 {
 //            int i;
 //
 //        }
-        init("texts/factorial_task.aqua");
+        init("examples/expr.aqua");
         par = new Parser();
         //par.yydebug=true;
         yylineno = 1;
         int i = par.yyparse();
         if (i == 0)
-            System.out.println("no errors");
+            System.out.println("No errors");
     }
 
     public static int yylineno;
@@ -94,11 +99,6 @@ public class j0 {
         return (short) (s.charAt(0));
     }
 
-    public static void print(ParserVal root) {
-        ((Tree) root.obj).print();
-        ((Tree) root.obj).print_graph(yyfilename + ".dot");
-    }
-
     public static Tree unwrap(Object obj) {
         if (obj instanceof Token)
             return new Tree("token", 0, (Token) obj);
@@ -117,10 +117,13 @@ public class j0 {
     }
 
     public static void process(Tree root) {
-        Interpreter interpreter = new Interpreter();
-        interpreter.semantic(root);
-        System.out.println("----interpretation----");
-        interpreter.interpret(root);
+        if (debug)root.print();
+//        ((Tree) root.obj).print_graph(yyfilename + ".dot");
+
+        if (debug) System.out.println("----semantic----");
+        Interpreter.semantic(root);
+        if (debug) System.out.println("----interpretation----");
+        Interpreter.interpret(root);
     }
 
     public static void semerror(String s) {

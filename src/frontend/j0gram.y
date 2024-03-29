@@ -11,12 +11,10 @@ import static frontend.Yyerror.yyerror;
 %%
 StartTerm: BlockStmtsOpt{
     $$=j0.node("BlockStmtsOpt",1024,$1);
-    j0.print($$);
     j0.process((Tree) $$.obj);
 };
 ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody {
   $$=j0.node("ClassDecl",1000,$3,$4);
-  j0.print($$);
  } ;
 ClassBody: '{' ClassBodyDecls '}' { $$=j0.node("ClassBody",1010,$2); }
          | '{' '}' { $$=j0.node("ClassBody",1011); };
@@ -87,9 +85,9 @@ WhileStmt: WHILE '(' Expr ')' Stmt { $$=j0.node("WhileStmt",1210,$3,$5); }
 | WHILE Expr Block { $$=j0.node("WhileStmt",1211,$2,$3); };
 
 DoWhileStmt: DO Block WHILE '(' Expr ')' {
-    $$=j0.node("DoWhileStmt",1212,$2,$5); }|
+    $$=j0.node("DoWhileStmt",1212,$5,$2); }|
     DO Block WHILE Expr{
-        $$=j0.node("DoWhileStmt",1213,$2,$4); };
+        $$=j0.node("DoWhileStmt",1213,$4,$2); };
 
 //todo FOR '(' ForHeader ')' Stmt
 /*
