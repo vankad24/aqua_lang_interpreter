@@ -29,7 +29,7 @@ public class FunctionHandler {
             addArgsToArrayList(args, args_list);
 
             var params_list = new ArrayList<Tree>();
-            addArgsToArrayList(func.params, params_list);
+//            addArgsToArrayList(func.params, params_list); todo fix
 
             checkArgsNumber(name, params_list.size(), args_list.size());
 

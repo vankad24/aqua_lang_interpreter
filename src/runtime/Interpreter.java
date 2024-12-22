@@ -54,12 +54,14 @@ public class Interpreter {
 
                 var func_scope = new SymbolTable("func", scope);
                 func_scope.is_inside_function = true;
-                
+
                 var params_list = new ArrayList<Tree>();
                 FunctionHandler.addArgsToArrayList(params, params_list);
 
                 for (var param : params_list) {
-                    declareVar(param.kids[0].tok, param.kids[1].tok.text, func_scope);
+                    var var_name = param.kids[1].tok.text;
+                    declareVar(param.kids[0].tok, var_name, func_scope);
+                    func_scope.assigned_vars.add(var_name);
                 }
 
                 block.scope = func_scope;
@@ -80,8 +82,9 @@ public class Interpreter {
                         if (return_value.type!=current_return_v.type)j0.semerror("Incompatible types: the return types must be the same");
                     }
                 }
+                if (return_value == null)return_value = new RuntimeValue(ValueType.NONE);
 
-                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params, block, return_value.type)));
+                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params_list, block, return_value.type)));
             }
             case "MethodCall" -> {
                 checkMethodCall(node, scope);
@@ -181,14 +184,19 @@ public class Interpreter {
                     }else if (!scope.isInitialized(var_name)){
                         j0.semerror("The var " + var_name + " can not be initialized");
                     }
-                    return new RuntimeValue(v.type);
-                } else return PrimitiveHandler.literalToValue(node.tok);
+                    var r = new RuntimeValue(v.type);
+                    node.calculated_value = r;
+                    return r;
+                } else{
+                    var r = PrimitiveHandler.literalToValue(node.tok);
+                    node.calculated_value = r;
+                    return r;
+                }
             }
             case "MethodCall" -> {
                 var result = checkMethodCall(node, scope);
+                if (result == null || result.type == ValueType.NONE)j0.error("function "+node.kids[0].tok.text+" does not return a value");
                 return result;
-                //                todo
-                //                if (result == null || result.type == ValueType.NONE)j0.error("function "+node.kids[0].tok.text+" does not return a value");
             }
             case "AddExpr", "MulExpr", "RelExpr", "EqExpr", "CondAndExpr", "CondOrExpr" -> {
                 var left = analyzeExpr(node.kids[0], scope);
@@ -224,36 +232,32 @@ public class Interpreter {
         return true;
     }
 
-    public static boolean checkVar(String name, SymbolTable scope, int expected_type) {
-        var v = scope.getVar(name);
-        if (v!=null) {
-            return checkType(expected_type, scope.getVar(name).type);
-        } else {
-            j0.semerror("Unknown name " + name);
-            return false;
-        }
-    }
-
     public static void collectAllReturnStmts(Tree node, ArrayList<Tree> returns){
         if (node.sym.equals("ReturnStmt")){
             returns.add(node);
             return;
         }
-        for (Tree kid : node.kids) {
-            collectAllReturnStmts(kid, returns);
+        if (node.kids != null) {
+            for (Tree kid : node.kids) {
+                collectAllReturnStmts(kid, returns);
+            }
         }
     }
 
     public static RuntimeValue checkMethodCall(Tree node, SymbolTable scope) {
-        // todo calc func return type
         String name = node.kids[0].tok.text;
-        if (checkVar(name, scope, ValueType.FUNCTION)) {
-            var func = ((FunctionType) scope.getVar(name).value);
+        var v = scope.getVar(name);
+        if (v == null) {
+            j0.semerror("Unknown name "+ name);
+        }else {
+            if(!checkType(v.type, ValueType.FUNCTION))j0.semerror("Name "+ name+ " is not a function");
+            var func = ((FunctionType) v.value);
             if (node.kids.length > 1) {
                 var args = node.kids[1];
                 var args_list = new ArrayList<Tree>();
                 FunctionHandler.addArgsToArrayList(args, args_list);
                 for (var expr : args_list) analyzeExpr(expr, scope);
+                if (!func.is_build_in) FunctionHandler.checkArgsNumber(name, func.params.size(), args_list.size());
             }
             return new RuntimeValue(func.return_type);
         }
