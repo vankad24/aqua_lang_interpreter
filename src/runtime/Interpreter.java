@@ -165,12 +165,10 @@ public class Interpreter {
                     var v = scope.getVar(var_name);
                     if (v == null) {
                         j0.semerror("Unknown name " + var_name);
-                        return null;
                     }else if (!scope.isInitialized(var_name)){
                         j0.semerror("The var " + var_name + " can not be initialized");
-                        return null;
                     }
-                    return scope.getVar(var_name);
+                    return new RuntimeValue(v.type);
                 } else return PrimitiveHandler.literalToValue(node.tok);
             }
             case "MethodCall" -> {
@@ -194,7 +192,7 @@ public class Interpreter {
             }
 
         }
-        return null;
+        return new RuntimeValue(ValueType.UNKNOWN);
     }
 
     public static void declareVar(Token type, String var_name, SymbolTable scope) {

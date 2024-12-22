@@ -10,6 +10,7 @@ public class ValueType {
     public static final int BOOL = 5;
     public static final int STRING = 6;
     public static final int NONE = 7;
+    public static final int UNKNOWN = 8;
 
     static int[] types_priority = new int[]{BOOL, INTEGER, FLOAT};
 

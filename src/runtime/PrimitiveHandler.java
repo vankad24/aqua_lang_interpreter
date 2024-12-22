@@ -15,6 +15,7 @@ public class PrimitiveHandler {
             case ValueType.BOOL -> processOperator(new RuntimeValue(new_type, true),op,new RuntimeValue(new_type, true));
             default -> null;
         };
+        if (r==null)return new RuntimeValue(ValueType.UNKNOWN);
         return new RuntimeValue(r.type);
     }
 
@@ -73,7 +74,7 @@ public class PrimitiveHandler {
             case Parser.INTLIT -> new RuntimeValue(ValueType.INTEGER, Integer.parseInt(t.text));
             case Parser.BOOLLIT -> new RuntimeValue(ValueType.BOOL, t.text.equals("true"));
             case Parser.STRINGLIT -> new RuntimeValue(ValueType.STRING, t.text);
-            default -> null;
+            default -> new RuntimeValue(ValueType.UNKNOWN);
         };
     }
 
