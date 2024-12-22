@@ -184,7 +184,7 @@ public class Interpreter {
                 RuntimeValue r;
                 if (left.value != null && right.value != null) {
                     r = processOperator(left, op, right);
-                    // todo change literal node
+                    node.calculated_value = r;
                 }else {
                     r = analyzeOperator(left, op, right);
                 }

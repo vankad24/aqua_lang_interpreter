@@ -1,5 +1,6 @@
 package frontend;
 
+import runtime.RuntimeValue;
 import runtime.SymbolTable;
 
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ public class Tree {
     public Token tok;
     public Tree[] kids;
     public SymbolTable scope;
+    public RuntimeValue calculated_value;
 
     public String escape(String s) {
         if (s.charAt(0) == '\"')
