@@ -30,6 +30,7 @@ public class Interpreter {
                 var result = analyzeExpr(node.kids[2], scope);
                 if (!scope.lookFor(var_name)) scope.addVar(var_name, result);
                 else checkType(scope.getVar(var_name).type, result.type);
+                scope.assigned_vars.add(var_name);
             }
             case "MethodDecl" -> {
                 String name = node.kids[0].tok.text;
@@ -83,9 +84,14 @@ public class Interpreter {
                     var else_scope = new SymbolTable("else", scope);
                     else_block.scope = else_scope;
                     analyzeBlock(else_block, else_scope);
-                }
 
-                /*todo check uninitialized vars after if*/
+                    // set vars as assigned for if-else
+                    for (String el : if_scope.assigned_vars) {
+                        if (else_scope.assigned_vars.contains(el)) {
+                            scope.assigned_vars.add(el);
+                        }
+                    }
+                }
             }
             case "WhileStmt", "DoWhileStmt" -> {
                 var r = analyzeExpr(node.kids[0], scope);
@@ -95,6 +101,11 @@ public class Interpreter {
                 var while_scope = new SymbolTable("while", scope);
                 while_block.scope = while_scope;
                 analyzeBlock(while_block, while_scope);
+
+                // set vars as assigned for do-while
+                if (node.sym.equals("DoWhileStmt")) {
+                    scope.assigned_vars.addAll(while_scope.assigned_vars);
+                }
             }
             case "ForStmt" -> {
                 var for_header = node.kids[0];
@@ -128,6 +139,9 @@ public class Interpreter {
                     var var_name = t.text;
                     if (!scope.lookFor(var_name)) {
                         j0.semerror("Unknown name " + var_name);
+                        return null;
+                    }else if (!scope.isInitialized(var_name)){
+                        j0.semerror("The var " + var_name + " can not be initialized");
                         return null;
                     }
                     return scope.getVar(var_name);

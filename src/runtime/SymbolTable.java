@@ -3,23 +3,27 @@ package runtime;
 import frontend.j0;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class SymbolTable {
     String name;
     SymbolTable parent;
     HashMap<String, RuntimeValue> variables;
+    HashSet<String> assigned_vars;
     boolean is_inside_function;
 
     public SymbolTable(String name){
         this.name = name;
         this.parent = null;
         variables = new HashMap<>();
+        assigned_vars = new HashSet<>();
         is_inside_function = false;
     }
     public SymbolTable(String name, SymbolTable parent){
         this.name = name;
         this.parent = parent;
         variables = new HashMap<>();
+        assigned_vars = new HashSet<>();
         is_inside_function = parent.is_inside_function;
     }
 
@@ -58,6 +62,13 @@ public class SymbolTable {
         else j0.semerror("Interpreter error: Unknown name "+ name);
     }
 
+    boolean isInitialized(String var_name){
+        if (assigned_vars.contains(var_name))return true;
+        else {
+            if (parent == null)return false;
+            else return parent.isInitialized(var_name);
+        }
+    }
 
 }
 
