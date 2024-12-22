@@ -108,11 +108,34 @@ public class Interpreter {
                 }
             }
             case "ForStmt" -> {
-                var for_header = node.kids[0];
-                // todo analyze for_header
-
                 var for_block = node.kids[1];
                 var for_scope = new SymbolTable("for", scope);
+                var for_header = node.kids[0];
+                if (for_header.sym.equals("ForShort")){
+                    var r = analyzeExpr(for_header.kids[0], scope);
+                    checkType(ValueType.INTEGER, r.type);
+                }else{
+                    // "ForNormal"
+                    var for_var_init = for_header.kids[0];
+                    var var_name = for_var_init.kids[0].tok.text;
+                    declareVar(new Token(Parser.INT,"",0),var_name, for_scope);
+                    if (for_var_init.rule == 1224){
+                        var r = analyzeExpr(for_var_init.kids[1], for_scope);
+                        checkType(ValueType.INTEGER, r.type);
+                    }
+                    for_scope.assigned_vars.add(var_name);
+
+                    var r = analyzeExpr(for_header.kids[2], for_scope);
+                    checkType(ValueType.INTEGER, r.type);
+
+                    //"ForFull"
+                    if (for_header.sym.equals("ForFull")){
+                        r = analyzeExpr(for_header.kids[3], for_scope);
+                        checkType(ValueType.INTEGER, r.type);
+                    }
+
+                }
+
                 for_block.scope = for_scope;
                 analyzeBlock(for_block, for_scope);
             }

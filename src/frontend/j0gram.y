@@ -110,15 +110,15 @@ ForStep: ':' Expr { $$=j0.node("ForStep",1224,$2); }
 ForStmt: FOR '(' ForHeader ')' Block { $$=j0.node("ForStmt",1220,$3,$5); }
  | FOR ForHeader Block { $$=j0.node("ForStmt",1221,$2,$3); };
 
-ForHeader: ForShort | ForNormal | ForFull;
+ForHeader: ForFull | ForNormal | ForShort;
 
-ForShort: Expr;
-ForNormal: ForInit ForSeparator Expr { $$=j0.node("ForNormal",1222,$1,$2,$3); };
-ForFull: ForInit ForSeparator Expr ':' Expr { $$=j0.node("ForFull",1223,$1,$2,$3,$5); }
+ForShort: Expr { $$=j0.node("ForShort",1226,$1); };
+ForNormal: ForVarInit ForSeparator Expr { $$=j0.node("ForNormal",1222,$1,$2,$3); };
+ForFull: ForVarInit ForSeparator Expr ':' Expr { $$=j0.node("ForFull",1223,$1,$2,$3,$5); }
 
-ForInit: ForVarInit | ForVar;
-ForVar: IDENTIFIER;
-ForVarInit: IDENTIFIER '=' Expr { $$=j0.node("ForVarInit",1224,$1,$3); };
+ForVarInit: IDENTIFIER '=' Expr { $$=j0.node("ForVarInit",1224,$1,$3); } |
+            IDENTIFIER { $$=j0.node("ForVarInit",1225,$1); };
+
 ForSeparator: ':' | RANGESEPARATOR;
 
 ExprOpt: Expr |  ;
