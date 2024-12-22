@@ -40,35 +40,48 @@ public class Interpreter {
                 var v = scope.getVar(name);
                 if (v != null) {
                     j0.semerror("Redeclaration of " + name);
-                } else {
-                    Tree params;
-                    Tree block;
-                    if (node.kids.length > 2) {
-                        params = node.kids[1];
-                        block = node.kids[2];
-                    } else {
-                        block = node.kids[1];
-                        params = null;
-                    }
-
-                    /* todo analyze params */
-
-                    var func_scope = new SymbolTable("func", scope);
-                    func_scope.is_inside_function = true;
-
-                    var params_list = new ArrayList<Tree>();
-                    FunctionHandler.addArgsToArrayList(params, params_list);
-
-                    for (var param : params_list) {
-                        declareVar(param.kids[0].tok, param.kids[1].tok.text, func_scope);
-                    }
-
-                    scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params, block)));
-
-                    block.scope = func_scope;
-                    analyzeBlock(block, func_scope);
-
                 }
+
+                Tree params;
+                Tree block;
+                if (node.kids.length > 2) {
+                    params = node.kids[1];
+                    block = node.kids[2];
+                } else {
+                    params = null;
+                    block = node.kids[1];
+                }
+
+                var func_scope = new SymbolTable("func", scope);
+                func_scope.is_inside_function = true;
+                
+                var params_list = new ArrayList<Tree>();
+                FunctionHandler.addArgsToArrayList(params, params_list);
+
+                for (var param : params_list) {
+                    declareVar(param.kids[0].tok, param.kids[1].tok.text, func_scope);
+                }
+
+                block.scope = func_scope;
+                analyzeBlock(block, func_scope);
+                ArrayList<Tree> returns = new ArrayList<>();
+                collectAllReturnStmts(block, returns);
+
+                RuntimeValue return_value = null;
+                for (var ret : returns){
+                    RuntimeValue current_return_v;
+                    if (ret.kids.length > 0){
+                        current_return_v = ret.kids[0].calculated_value;
+                    }else {
+                        current_return_v = new RuntimeValue(ValueType.NONE);
+                    }
+                    if (return_value==null)return_value = current_return_v;
+                    else{
+                        if (return_value.type!=current_return_v.type)j0.semerror("Incompatible types: the return types must be the same");
+                    }
+                }
+
+                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params, block, return_value.type)));
             }
             case "MethodCall" -> {
                 checkMethodCall(node, scope);
@@ -143,7 +156,7 @@ public class Interpreter {
             }
             case "ReturnStmt" -> {
                 if (!scope.is_inside_function) j0.error("return outside function");
-                analyzeExpr(node.kids[0], scope);
+                if (node.kids.length != 0) analyzeExpr(node.kids[0], scope);
             }
             case "BlockStmtsOpt", "BlockStmts", "Block" -> {
                 for (Tree kid : node.kids) {
@@ -184,10 +197,10 @@ public class Interpreter {
                 RuntimeValue r;
                 if (left.value != null && right.value != null) {
                     r = processOperator(left, op, right);
-                    node.calculated_value = r;
                 }else {
                     r = analyzeOperator(left, op, right);
                 }
+                node.calculated_value = r;
                 return r;
             }
 
@@ -218,6 +231,16 @@ public class Interpreter {
         } else {
             j0.semerror("Unknown name " + name);
             return false;
+        }
+    }
+
+    public static void collectAllReturnStmts(Tree node, ArrayList<Tree> returns){
+        if (node.sym.equals("ReturnStmt")){
+            returns.add(node);
+            return;
+        }
+        for (Tree kid : node.kids) {
+            collectAllReturnStmts(kid, returns);
         }
     }
 

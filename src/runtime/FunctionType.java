@@ -13,7 +13,7 @@ public class FunctionType {
         this.return_type = return_type;
     }
 
-    public FunctionType(Tree params, Tree block) {
+    public FunctionType(Tree params, Tree block, int return_type) {
         is_build_in = false;
         this.params = params;
         this.block = block;
