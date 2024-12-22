@@ -28,19 +28,9 @@ public class SymbolTable {
     }
 
     public RuntimeValue getVar(String name){
-        RuntimeValue runtimeValue = variables.get(name);
-        if (runtimeValue != null){
-//            if (runtimeValue.value == null) j0.semerror("Interpreter error: The variable "+ name+" is not defined");
-            return runtimeValue;
-        }
-        if (parent == null) j0.semerror("Unknown name "+ name);
+        if (variables.containsKey(name)) return variables.get(name);
+        if (parent==null) return null;
         return parent.getVar(name);
-    }
-
-    public boolean lookFor(String name){
-        if (variables.containsKey(name)) return true;
-        if (parent==null) return false;
-        return parent.lookFor(name);
     }
 
     public boolean contains(String name){

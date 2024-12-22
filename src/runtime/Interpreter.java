@@ -28,15 +28,17 @@ public class Interpreter {
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
                 var result = analyzeExpr(node.kids[2], scope);
-                if (!scope.lookFor(var_name)) scope.addVar(var_name, result);
-                else checkType(scope.getVar(var_name).type, result.type);
+                var v = scope.getVar(var_name);
+                if (v == null) scope.addVar(var_name, result);
+                else checkType(v.type, result.type);
                 scope.assigned_vars.add(var_name);
             }
             case "MethodDecl" -> {
                 String name = node.kids[0].tok.text;
                 if (!scope.name.equals("global")) j0.error("cannot declare function " + name + " not in global scope");
 
-                if (scope.lookFor(name)) {
+                var v = scope.getVar(name);
+                if (v != null) {
                     j0.semerror("Redeclaration of " + name);
                 } else {
                     Tree params;
@@ -160,7 +162,8 @@ public class Interpreter {
                 Token t = node.tok;
                 if (t.code == Parser.IDENTIFIER) {
                     var var_name = t.text;
-                    if (!scope.lookFor(var_name)) {
+                    var v = scope.getVar(var_name);
+                    if (v == null) {
                         j0.semerror("Unknown name " + var_name);
                         return null;
                     }else if (!scope.isInitialized(var_name)){
@@ -211,7 +214,8 @@ public class Interpreter {
     }
 
     public static boolean checkVar(String name, SymbolTable scope, int expected_type) {
-        if (scope.lookFor(name)) {
+        var v = scope.getVar(name);
+        if (v!=null) {
             return checkType(expected_type, scope.getVar(name).type);
         } else {
             j0.semerror("Unknown name " + name);
