@@ -1,0 +1,13 @@
+{
+    "cmd": ["aqua.bat", "$file"],
+    "file_regex": "File ([^:]+):([0-9]+)\\s*-\\s*(.*)",
+    "working_dir": "$file_path",
+    "selector": "source.aqua",
+    "variants":
+    [
+        {
+            "name": "Debug",
+            "cmd": ["aqua.bat", "--debug", "$file"]
+        }
+    ]
+}
