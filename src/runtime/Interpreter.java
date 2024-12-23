@@ -18,6 +18,7 @@ public class Interpreter {
     }
 
     public static void analyzeBlock(Tree node, SymbolTable scope) {
+        if (node == null)return;
         switch (node.sym) {
             case "LocalVarDecl" -> {
                 declareVar(node.kids[0].tok, node.kids[1].tok.text, scope);
