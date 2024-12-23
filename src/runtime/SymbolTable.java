@@ -8,7 +8,7 @@ import java.util.HashSet;
 public class SymbolTable {
     String name;
     SymbolTable parent;
-    HashMap<String, RuntimeValue> variables;
+    public HashMap<String, RuntimeValue> variables;
     HashSet<String> assigned_vars;
     boolean is_inside_function;
 

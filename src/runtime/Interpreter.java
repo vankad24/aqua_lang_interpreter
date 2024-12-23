@@ -286,7 +286,9 @@ public class Interpreter {
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
                 var result = evalExpr(node.kids[2], scope);
-                scope.setVar(var_name, result);
+                var v = scope.getVar(var_name);
+                if (v == null) scope.addVar(var_name, result);
+                else scope.setVar(var_name, result);
             }
             case "MethodDecl" -> {
                 // already declared in global scope

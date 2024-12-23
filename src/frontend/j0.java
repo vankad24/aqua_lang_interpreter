@@ -2,11 +2,10 @@ package frontend;
 
 
 
-import runtime.FunctionHandler;
-import runtime.Interpreter;
-import runtime.SymbolTable;
+import runtime.*;
 
 import java.io.FileReader;
+import java.util.Iterator;
 
 /*
 cd .\src\frontend\
@@ -39,11 +38,9 @@ public class j0 {
     public static void main(String[] argv) throws Exception {
         parseArguments(argv);
         if (file_path == null){
-            System.err.println("No file path provided");
-            System.exit(1);
+            ErrorHandler.print("No file path provided");
         }
         init(file_path);
-
         par = new Parser();
         //par.yydebug=true;
         yylineno = 1;
@@ -63,14 +60,12 @@ public class j0 {
                         System.exit(0);
                     }
                     default -> {
-                        System.err.println("Unknown flag '"+arg+"'");
-                        System.exit(1);
+                        ErrorHandler.print("Unknown flag '"+arg+"'");
                     }
                 }
             }else {
                 if (file_path != null){
-                    System.err.println("Expected only one file path parameter");
-                    System.exit(1);
+                    ErrorHandler.print("Expected only one file path parameter");
                 } else {
                     file_path = arg;
                 }
@@ -102,9 +97,8 @@ public class j0 {
         return rv;
     }
 
-    public static void lexErr(String s) {
-        System.err.println(s);
-        System.exit(1);
+    public static void unknownCharError() {
+        ErrorHandler.print("Lexer error: unrecognized character '" +yylexer.yycharat(0) + "' at line "+ yylineno);
     }
 
     public static int scan(int code) {
@@ -158,6 +152,9 @@ public class j0 {
             Interpreter.semantic(root, global_scope);
             if (debug) System.out.println("No errors");
         }
+        // remove all variables except functions
+        global_scope.variables.keySet().removeIf(name -> global_scope.variables.get(name).type != ValueType.FUNCTION);
+
         if (debug) System.out.println("----interpretation----");
         Interpreter.interpret(root, global_scope);
     }
