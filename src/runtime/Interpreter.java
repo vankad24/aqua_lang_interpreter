@@ -278,7 +278,7 @@ public class Interpreter {
     }
 
     public static RuntimeValue evalBlock(Tree node, SymbolTable scope) {
-        if (node == null) return null;
+        if (node == null || node.sym.equals("token") && node.tok.text.equals(";")) return null;
         switch (node.sym) {
             case "LocalVarDecl" -> {
                 declareVar(node.kids[0].tok, node.kids[1].tok.text, scope);
