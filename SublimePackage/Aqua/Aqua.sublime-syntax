@@ -57,7 +57,7 @@ contexts:
       scope: support.function.builtin.aqua
 
     # Function call
-    - match: '{{identifier}}\s*\('
+    - match: '{{identifier}}\s*(?=(\())'
       scope: variable.function.aqua
 
   function-definition-name:
