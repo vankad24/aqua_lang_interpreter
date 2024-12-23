@@ -14,7 +14,6 @@ public class Tree {
     public int nkids;
     public Token tok;
     public Tree[] kids;
-    public SymbolTable scope;
     public RuntimeValue calculated_value;
 
     public String escape(String s) {

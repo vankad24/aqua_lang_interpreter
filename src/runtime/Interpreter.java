@@ -13,10 +13,7 @@ import static runtime.PrimitiveHandler.processOperator;
 
 public class Interpreter {
 
-    public static void semantic(Tree root) {
-        SymbolTable global_scope = new SymbolTable("global");
-        root.scope = global_scope;
-        FunctionHandler.initBuiltin(global_scope);
+    public static void semantic(Tree root, SymbolTable global_scope) {
         analyzeBlock(root, global_scope);
     }
 
@@ -64,7 +61,6 @@ public class Interpreter {
                     func_scope.assigned_vars.add(var_name);
                 }
 
-                block.scope = func_scope;
                 analyzeBlock(block, func_scope);
                 ArrayList<Tree> returns = new ArrayList<>();
                 collectAllReturnStmts(block, returns);
@@ -95,12 +91,10 @@ public class Interpreter {
 
                 var if_block = node.kids[1];
                 var if_scope = new SymbolTable("if", scope);
-                if_block.scope = if_scope;
                 analyzeBlock(if_block, if_scope);
                 if (node.sym.equals("IfElseStmt")) {
                     var else_block = node.kids[2];
                     var else_scope = new SymbolTable("else", scope);
-                    else_block.scope = else_scope;
                     analyzeBlock(else_block, else_scope);
 
                     // set vars as assigned for if-else
@@ -117,7 +111,6 @@ public class Interpreter {
 
                 var while_block = node.kids[1];
                 var while_scope = new SymbolTable("while", scope);
-                while_block.scope = while_scope;
                 analyzeBlock(while_block, while_scope);
 
                 // set vars as assigned for do-while
@@ -154,7 +147,6 @@ public class Interpreter {
 
                 }
 
-                for_block.scope = for_scope;
                 analyzeBlock(for_block, for_scope);
             }
             case "ReturnStmt" -> {
@@ -265,8 +257,8 @@ public class Interpreter {
     }
 
 
-    static public void interpret(Tree root) {
-        evalBlock(root, root.scope);
+    static public void interpret(Tree root, SymbolTable global_scope) {
+        evalBlock(root, global_scope);
     }
 
     public static RuntimeValue evalBlock(Tree node, SymbolTable scope) {

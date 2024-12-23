@@ -2,7 +2,9 @@ package frontend;
 
 
 
+import runtime.FunctionHandler;
 import runtime.Interpreter;
+import runtime.SymbolTable;
 
 import java.io.FileReader;
 
@@ -120,10 +122,13 @@ public class j0 {
         if (debug)root.print();
 //        ((Tree) root.obj).print_graph(yyfilename + ".dot");
 
+        SymbolTable global_scope = new SymbolTable("global");
+        FunctionHandler.initBuiltin(global_scope);
+
         if (debug) System.out.println("----semantic----");
-        Interpreter.semantic(root);
+        Interpreter.semantic(root, global_scope);
         if (debug) System.out.println("----interpretation----");
-        Interpreter.interpret(root);
+        Interpreter.interpret(root, global_scope);
     }
 
     public static void semerror(String s) {
