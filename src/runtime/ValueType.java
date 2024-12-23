@@ -20,4 +20,18 @@ public class ValueType {
         }
         return -1;
     }
+
+    public static String getName(int type){
+        return switch (type){
+            case UNKNOWN -> "Unknown";
+            case INTEGER -> "Integer";
+            case FLOAT -> "Float";
+            case FUNCTION -> "Function";
+            case CLASS -> "Class";
+            case BOOL -> "Boolean";
+            case STRING -> "String";
+            case NONE -> "None";
+            default -> "Undefined";
+        };
+    }
 }

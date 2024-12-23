@@ -731,7 +731,7 @@ class Yylex {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { j0.lexErr("unrecognized character");
+            { j0.unknownCharError();
             }
           // fall through
           case 55: break;

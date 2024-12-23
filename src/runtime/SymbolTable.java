@@ -38,7 +38,7 @@ public class SymbolTable {
     }
     public void addVar(String name, RuntimeValue runtimeValue) {
         if (variables.containsKey(name))
-            j0.semerror("Interpreter error: Redeclaration of " + name);
+            ErrorHandler.interpreterError("Redeclaration of name" + name);
         variables.put(name, runtimeValue);
     }
 
@@ -46,10 +46,10 @@ public class SymbolTable {
         var current_value = variables.get(name);
         if (current_value!=null){
             if ( current_value.type!=value.type)
-                j0.semerror("Interpreter error: Assign type mismatch for "+ name);
+                ErrorHandler.interpreterError("Assign type mismatch for name: "+ name);
             variables.put(name, value);
         } else if (parent != null) parent.setVar(name, value);
-        else j0.semerror("Interpreter error: Unknown name "+ name);
+        else ErrorHandler.interpreterError("Unknown name: "+ name);
     }
 
     boolean isInitialized(String var_name){

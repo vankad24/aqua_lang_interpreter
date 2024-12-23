@@ -59,4 +59,4 @@ id=([a-zA-Z_][a-zA-Z0-9_]*)
 [0-9]*"."[0-9]*([eE][+-]?[0-9]+)? { return j0.scan(Parser.DOUBLELIT); }
 ([0-9]+)([eE][+-]?([0-9]+))  { return j0.scan(Parser.DOUBLELIT); }
 \"([^\"]|(\\.))*\"     { return j0.scan(Parser.STRINGLIT); }
-.                      { j0.lexErr("unrecognized character"); }
+.                      { j0.unknownCharError(); }

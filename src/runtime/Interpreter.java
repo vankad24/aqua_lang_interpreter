@@ -27,16 +27,16 @@ public class Interpreter {
                 var result = analyzeExpr(node.kids[2], scope);
                 var v = scope.getVar(var_name);
                 if (v == null) scope.addVar(var_name, result);
-                else checkType(v.type, result.type);
+                else checkType(node.kids[0].tok, var_name, v.type, result.type);
                 scope.assigned_vars.add(var_name);
             }
             case "MethodDecl" -> {
                 String name = node.kids[0].tok.text;
-                if (!scope.name.equals("global")) j0.error("cannot declare function " + name + " not in global scope");
+                if (!scope.name.equals("global")) ErrorHandler.syntaxError(node.kids[0].tok, "cannot declare function '" + name + "' not in global scope");
 
                 var v = scope.getVar(name);
                 if (v != null) {
-                    j0.semerror("Redeclaration of func " + name);
+                    ErrorHandler.redeclaration(node.kids[0].tok, name);
                 }
 
                 Tree params;
@@ -73,6 +73,7 @@ public class Interpreter {
                 collectAllReturnStmts(block, returns);
 
                 RuntimeValue return_value = null;
+                Tree return_node = null;
                 for (var ret : returns){
                     RuntimeValue current_return_v;
                     if (ret.kids.length > 0){
@@ -80,16 +81,22 @@ public class Interpreter {
                     }else {
                         current_return_v = new RuntimeValue(ValueType.NONE);
                     }
-                    if (return_value==null)return_value = current_return_v;
+                    if (return_value==null){
+                        return_value = current_return_v;
+                        return_node = ret;
+                    }
                     else{
                         if (current_return_v.type != ValueType.UNKNOWN) {
-                            if (return_value.type == ValueType.UNKNOWN)return_value = current_return_v;
-                            else if (return_value.type != current_return_v.type)j0.semerror("Incompatible types: the return types must be the same");
+                            if (return_value.type == ValueType.UNKNOWN){
+                                return_value = current_return_v;
+                                return_node = ret;
+                            }
+                            else if (return_value.type != current_return_v.type)ErrorHandler.typeError(return_node.tok, String.format("Inconsistent return types. All return expressions must return values of the same type. Got '%s' and '%s'", ValueType.getName(return_value.type),ValueType.getName(current_return_v.type)));
                         }
                     }
                 }
                 if (return_value == null)return_value = new RuntimeValue(ValueType.NONE);
-                else if (return_value.type == ValueType.UNKNOWN)j0.semerror("Can not calculate return type");
+                else if (return_value.type == ValueType.UNKNOWN)ErrorHandler.typeError(return_node.tok,"Can not calculate return type");
                 func.return_type = return_value.type;
                 analyzeBlock(block, func_scope2);
             }
@@ -98,7 +105,7 @@ public class Interpreter {
             }
             case "IfStmt", "IfElseStmt" -> {
                 var r = analyzeExpr(node.kids[0], scope);
-                checkType(ValueType.BOOL, r.type);
+                checkType(node.tok, "if stmt condition", ValueType.BOOL, r.type);
 
                 var if_block = node.kids[1];
                 var if_scope = new SymbolTable("if", scope);
@@ -118,7 +125,7 @@ public class Interpreter {
             }
             case "WhileStmt", "DoWhileStmt" -> {
                 var r = analyzeExpr(node.kids[0], scope);
-                checkType(ValueType.BOOL, r.type);
+                checkType(node.tok, "while stmt condition", ValueType.BOOL, r.type);
 
                 var while_block = node.kids[1];
                 var while_scope = new SymbolTable("while", scope);
@@ -135,7 +142,7 @@ public class Interpreter {
                 var for_header = node.kids[0];
                 if (for_header.sym.equals("ForShort")){
                     var r = analyzeExpr(for_header.kids[0], scope);
-                    checkType(ValueType.INTEGER, r.type);
+                    checkType(node.tok, "for initialization", ValueType.INTEGER, r.type);
                 }else{
                     // "ForNormal"
                     var for_var_init = for_header.kids[0];
@@ -143,17 +150,17 @@ public class Interpreter {
                     declareVar(new Token(Parser.INT,"",0),var_name, for_scope);
                     if (for_var_init.rule == 1224){
                         var r = analyzeExpr(for_var_init.kids[1], for_scope);
-                        checkType(ValueType.INTEGER, r.type);
+                        checkType(node.tok, "for initialization", ValueType.INTEGER, r.type);
                     }
                     for_scope.assigned_vars.add(var_name);
 
                     var r = analyzeExpr(for_header.kids[2], for_scope);
-                    checkType(ValueType.INTEGER, r.type);
+                    checkType(node.tok, "for limit", ValueType.INTEGER, r.type);
 
                     //"ForFull"
                     if (for_header.sym.equals("ForFull")){
                         r = analyzeExpr(for_header.kids[3], for_scope);
-                        checkType(ValueType.INTEGER, r.type);
+                        checkType(node.tok, "for step", ValueType.INTEGER, r.type);
                     }
 
                 }
@@ -161,7 +168,7 @@ public class Interpreter {
                 analyzeBlock(for_block, for_scope);
             }
             case "ReturnStmt" -> {
-                if (!scope.is_inside_function) j0.error("return statement outside a function");
+                if (!scope.is_inside_function) ErrorHandler.syntaxError(node.tok,"return statement outside a function");
                 if (node.kids.length != 0) analyzeExpr(node.kids[0], scope);
             }
             case "BlockStmtsOpt", "BlockStmts", "Block" -> {
@@ -183,9 +190,9 @@ public class Interpreter {
                     var var_name = t.text;
                     var v = scope.getVar(var_name);
                     if (v == null) {
-                        j0.semerror("Unknown name " + var_name);
+                        ErrorHandler.unknownName(t, var_name);
                     }else if (!scope.isInitialized(var_name)){
-                        j0.semerror("The var " + var_name + " can not be initialized");
+                        ErrorHandler.nameError(t, "Variable '"+var_name+"' a might not have been initialized");
                     }
                     var r = new RuntimeValue(v.type);
                     node.calculated_value = r;
@@ -198,7 +205,7 @@ public class Interpreter {
             }
             case "MethodCall" -> {
                 var result = checkMethodCall(node, scope);
-                if (result == null || result.type == ValueType.NONE)j0.error("function "+node.kids[0].tok.text+" does not return a value");
+                if (result == null || result.type == ValueType.NONE)ErrorHandler.typeError(node.kids[0].tok,"function "+node.kids[0].tok.text+" does not return a value");
                 return result;
             }
             case "AddExpr", "MulExpr", "RelExpr", "EqExpr", "CondAndExpr", "CondOrExpr" -> {
@@ -211,7 +218,7 @@ public class Interpreter {
                 }else {
                     r = analyzeOperator(left, op, right);
                 }
-                if (r == null)j0.semerror("Unsupported operator "+op);
+                if (r == null)ErrorHandler.typeError(node.kids[1].tok, String.format("Unsupported operator '%s' for types '%s' and '%s'", op, ValueType.getName(left.type),ValueType.getName(right.type)));
                 node.calculated_value = r;
                 return r;
             }
@@ -222,18 +229,15 @@ public class Interpreter {
 
     public static void declareVar(Token type, String var_name, SymbolTable scope) {
         if (scope.contains(var_name)) {
-            j0.semerror("Redeclaration of " + var_name);
-            return;
+            ErrorHandler.redeclaration(type, var_name);
         }
         scope.addVar(var_name, new RuntimeValue(PrimitiveHandler.tokenToType(type)));
     }
 
-    public static boolean checkType(int expected, int provided) {
+    public static void checkType(Token t, String name, int expected, int provided) {
         if (provided != expected) {
-            j0.semerror("Assign type mismatch for");/*todo var name and type names*/
-            return false;
+            ErrorHandler.typeError(t, String.format("Assign type mismatch for name '%s'. Expected type '%s', got '%s'", name, ValueType.getName(expected),ValueType.getName(provided)));
         }
-        return true;
     }
 
     public static void collectAllReturnStmts(Tree node, ArrayList<Tree> returns){
@@ -252,9 +256,9 @@ public class Interpreter {
         String name = node.kids[0].tok.text;
         var v = scope.getVar(name);
         if (v == null) {
-            j0.semerror("Unknown name "+ name);
+            ErrorHandler.unknownName(node.kids[0].tok, name);
         }else {
-            if(!checkType(v.type, ValueType.FUNCTION))j0.semerror("Name "+ name+ " is not a function");
+            checkType(node.kids[0].tok, name, ValueType.FUNCTION, v.type);
             var func = ((FunctionType) v.value);
             if (node.kids.length > 1) {
                 var args = node.kids[1];
@@ -316,7 +320,7 @@ public class Interpreter {
                 }
             }
             default -> {
-                j0.error("the node is not implemented: " + node.sym + " " + node.tok);
+                ErrorHandler.notImplementedError(node.sym + " " + node.tok);
             }
         }
         return null;

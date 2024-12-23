@@ -83,10 +83,7 @@ public class PrimitiveHandler {
             case Parser.INT-> ValueType.INTEGER;
             case Parser.FLOAT-> ValueType.FLOAT;
             case Parser.BOOL-> ValueType.BOOL;
-            default -> {
-                j0.semerror("unknown type "+type);
-                yield -1;
-            }
+            default ->  ValueType.UNKNOWN;
         };
     }
 

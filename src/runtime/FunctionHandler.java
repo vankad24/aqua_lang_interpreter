@@ -62,7 +62,7 @@ public class FunctionHandler {
                 return new RuntimeValue(ValueType.FLOAT, sc.nextFloat());
             }
             default -> {
-                j0.error(name + " not yet implemented");
+                ErrorHandler.notImplementedError("build in function "+name);
             }
         }
         return null;
@@ -77,7 +77,7 @@ public class FunctionHandler {
     }
 
     static void checkArgsNumber(String fun_name, int params, int args){
-        if (params!=args)j0.error("function "+fun_name+": expected "+params+" arguments, but got "+args);
+        if (params!=args)ErrorHandler.print("Function "+fun_name+" takes "+params+" arguments, but "+args+" was given");
     }
 
 }
