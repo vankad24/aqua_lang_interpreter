@@ -158,7 +158,7 @@ public class Interpreter {
                 analyzeBlock(for_block, for_scope);
             }
             case "ReturnStmt" -> {
-                if (!scope.is_inside_function) j0.error("return outside function");
+                if (!scope.is_inside_function) j0.error("return statement outside a function");
                 if (node.kids.length != 0) analyzeExpr(node.kids[0], scope);
             }
             case "BlockStmtsOpt", "BlockStmts", "Block" -> {
@@ -266,7 +266,7 @@ public class Interpreter {
 
 
     static public void interpret(Tree root) {
-//        evalBlock(root, root.scope);
+        evalBlock(root, root.scope);
     }
 
     public static RuntimeValue evalBlock(Tree node, SymbolTable scope) {
@@ -319,15 +319,17 @@ public class Interpreter {
                 Token t = node.tok;
                 if (t.code == Parser.IDENTIFIER)
                     return scope.getVar(t.text);
-                return PrimitiveHandler.literalToValue(node.tok);
+                else
+                    //PrimitiveHandler.literalToValue(node.tok);
+                    return node.calculated_value;
             }
             case "MethodCall" -> {
-                var result = processMethodCall(node, scope);
-                if (result == null || result.type == ValueType.NONE)
-                    j0.error("function " + node.kids[0].tok.text + " does not return a value");
-                return result;
+                return processMethodCall(node, scope);
             }
             case "AddExpr", "MulExpr", "RelExpr", "EqExpr", "CondAndExpr", "CondOrExpr" -> {
+                RuntimeValue r = node.calculated_value;
+                if (r.value != null) return r;
+
                 var left = evalExpr(node.kids[0], scope);
                 var op = node.kids[1].tok.text;
                 var right = evalExpr(node.kids[2], scope);
@@ -340,7 +342,6 @@ public class Interpreter {
 
     static RuntimeValue processIfElse(Tree condition_expr, Tree if_block, Tree else_block, SymbolTable scope) {
         var condition = evalExpr(condition_expr, scope);
-        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the if stmt");
         if ((boolean) condition.value) {
             return evalBlock(if_block, new SymbolTable("if_stmt", scope));
         } else if (else_block != null) {
@@ -352,7 +353,6 @@ public class Interpreter {
 
     static RuntimeValue processWhile(Tree expr, Tree block, SymbolTable scope) {
         var condition = evalExpr(expr, scope);
-        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
         while ((boolean) condition.value) {
             var result = evalBlock(block, new SymbolTable("while_stmt", scope));
             if (result != null) return result;
@@ -365,43 +365,37 @@ public class Interpreter {
         var r = evalBlock(block, new SymbolTable("do_while_stmt", scope));
         if (r != null) return r;
         var condition = evalExpr(expr, scope);
-        if (condition.type != ValueType.BOOL) j0.error("not bool expression in the while stmt");
         while ((boolean) condition.value) {
-            r = evalBlock(block, new SymbolTable("do_while_stmt", scope));
+            var while_scope = new SymbolTable("do_while_stmt", scope);
+            r = evalBlock(block, while_scope);
             if (r != null) return r;
-            condition = evalExpr(expr, scope);
+            condition = evalExpr(expr, while_scope);
         }
         return null;
     }
 
     static RuntimeValue processFor(Tree header, Tree block, SymbolTable scope) {
-        var for_scope = new SymbolTable("for_scope", scope);
-        if (!header.sym.equals("ForNormal") && !header.sym.equals("ForFull")) {
+        var base_for_scope = new SymbolTable("base_for_scope", scope);
+        if (header.sym.equals("ForShort")){
             int i = 0;
             while (true) {
-                var limit = evalExpr(header, scope);
+                var limit = evalExpr(header.kids[0], scope);
                 if (i >= (int) limit.value) break;
-                var r = evalBlock(block, new SymbolTable("for_scope1", for_scope));
+                var r = evalBlock(block, new SymbolTable("short_for_scope", base_for_scope));
                 if (r != null) return r;
                 i++;
             }
         } else {
             var var_init = header.kids[0];
-            String var_name;
-            if (var_init.sym.equals("ForVarInit")) {
-                var t = header.kids[0];
-                var_name = t.kids[0].tok.text;
-                var result = evalExpr(t.kids[1], scope);
-                if (result.type != ValueType.INTEGER) j0.error("not int expression in for init");
-                for_scope.addVar(var_name, result);
-            } else {
-                var_name = var_init.tok.text;
-                for_scope.addVar(var_name, new RuntimeValue(ValueType.INTEGER, 0));
-            }
+            String var_name = var_init.kids[0].tok.text;
+            RuntimeValue init_value;
+            if (var_init.rule == 1224) init_value = evalExpr(var_init.kids[1], scope);
+            else init_value = new RuntimeValue(ValueType.INTEGER, 0);
+            base_for_scope.addVar(var_name, init_value);
+
             var separator = header.kids[1];
 
-            boolean greater_or_equal = false;
-            if (!separator.tok.text.equals(":")) greater_or_equal = true;
+            boolean greater_or_equal = !separator.tok.text.equals(":");
 
 
             var limit = header.kids[2];
@@ -413,18 +407,18 @@ public class Interpreter {
             }
             int i_value;
             while (true) {
-                i_value = (int) for_scope.getVar(var_name).value;
+                i_value = (int) base_for_scope.getVar(var_name).value;
                 if (greater_or_equal) {
                     if (!(i_value <= (int) evalExpr(limit, scope).value)) break;
                 } else {
                     if (!(i_value < (int) evalExpr(limit, scope).value)) break;
                 }
-                var r = evalBlock(block, new SymbolTable("for_scope", for_scope));
+                var r = evalBlock(block, new SymbolTable("for_scope", base_for_scope));
                 if (r != null) return r;
                 int step;
                 if (need_count_step) step = (int) evalExpr(step_expr, scope).value;
                 else step = 1;
-                for_scope.setVar(var_name, PrimitiveHandler.handleInt(i_value, step, "+"));
+                base_for_scope.setVar(var_name, PrimitiveHandler.handleInt(i_value, step, "+"));
             }
         }
         return null;

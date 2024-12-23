@@ -18,25 +18,17 @@ public class FunctionHandler {
     }
 
     public static RuntimeValue eval(String name, Tree args, SymbolTable scope){
-        var runtimeValue = scope.getVar(name);
-        if (runtimeValue.type != ValueType.FUNCTION) j0.error(name+ " is not a function");
-
-        var func = (FunctionType) runtimeValue.value;
+        var func = (FunctionType) scope.getVar(name).value;
 
         if (func.is_build_in)return evalBuiltin(name, args, scope);
         else {
             var args_list = new ArrayList<Tree>();
             addArgsToArrayList(args, args_list);
 
-            var params_list = new ArrayList<Tree>();
-//            addArgsToArrayList(func.params, params_list); todo fix
-
-            checkArgsNumber(name, params_list.size(), args_list.size());
-
             var func_scope = new SymbolTable("function", scope);
             func_scope.is_inside_function = true;
             for (int i = 0; i <args_list.size(); i++) {
-                var varInit = params_list.get(i);
+                var varInit = func.params.get(i);
                 var type = varInit.kids[0].tok;
                 var var_name = varInit.kids[1].tok.text;
                 var value = Interpreter.evalExpr(args_list.get(i), scope);
