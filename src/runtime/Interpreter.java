@@ -200,6 +200,7 @@ public class Interpreter {
                 }else {
                     r = analyzeOperator(left, op, right);
                 }
+                if (r == null)j0.semerror("Unsupported operator "+op);
                 node.calculated_value = r;
                 return r;
             }

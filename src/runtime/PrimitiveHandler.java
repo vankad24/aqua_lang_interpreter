@@ -22,6 +22,7 @@ public class PrimitiveHandler {
         int new_type = determineResultType(v1, v2);
         v1 = castToType(v1, new_type);
         v2 = castToType(v2, new_type);
+        if (v1 == null || v2 == null)return null;
 
         return switch (new_type) {
             case ValueType.FLOAT -> handleFloat((float) v1.value, (float) v2.value, op);
