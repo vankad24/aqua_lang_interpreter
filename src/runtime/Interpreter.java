@@ -36,7 +36,7 @@ public class Interpreter {
 
                 var v = scope.getVar(name);
                 if (v != null) {
-                    j0.semerror("Redeclaration of " + name);
+                    j0.semerror("Redeclaration of func " + name);
                 }
 
                 Tree params;
@@ -50,17 +50,24 @@ public class Interpreter {
                 }
 
                 var func_scope = new SymbolTable("func", scope);
+                var func_scope2 = new SymbolTable("func2", scope);
                 func_scope.is_inside_function = true;
+                func_scope2.is_inside_function = true;
 
                 var params_list = new ArrayList<Tree>();
                 FunctionHandler.addArgsToArrayList(params, params_list);
 
+                var func = new FunctionType(params_list, block, ValueType.UNKNOWN);
+
                 for (var param : params_list) {
                     var var_name = param.kids[1].tok.text;
                     declareVar(param.kids[0].tok, var_name, func_scope);
+                    declareVar(param.kids[0].tok, var_name, func_scope2);
                     func_scope.assigned_vars.add(var_name);
+                    func_scope2.assigned_vars.add(var_name);
                 }
 
+                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, func));
                 analyzeBlock(block, func_scope);
                 ArrayList<Tree> returns = new ArrayList<>();
                 collectAllReturnStmts(block, returns);
@@ -75,12 +82,16 @@ public class Interpreter {
                     }
                     if (return_value==null)return_value = current_return_v;
                     else{
-                        if (return_value.type!=current_return_v.type)j0.semerror("Incompatible types: the return types must be the same");
+                        if (current_return_v.type != ValueType.UNKNOWN) {
+                            if (return_value.type == ValueType.UNKNOWN)return_value = current_return_v;
+                            else if (return_value.type != current_return_v.type)j0.semerror("Incompatible types: the return types must be the same");
+                        }
                     }
                 }
                 if (return_value == null)return_value = new RuntimeValue(ValueType.NONE);
-
-                scope.addVar(name, new RuntimeValue(ValueType.FUNCTION, new FunctionType(params_list, block, return_value.type)));
+                else if (return_value.type == ValueType.UNKNOWN)j0.semerror("Can not calculate return type");
+                func.return_type = return_value.type;
+                analyzeBlock(block, func_scope2);
             }
             case "MethodCall" -> {
                 checkMethodCall(node, scope);
@@ -265,10 +276,16 @@ public class Interpreter {
     public static RuntimeValue evalBlock(Tree node, SymbolTable scope) {
         if (node == null) return null;
         switch (node.sym) {
+            case "LocalVarDecl" -> {
+                declareVar(node.kids[0].tok, node.kids[1].tok.text, scope);
+            }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
                 var result = evalExpr(node.kids[2], scope);
                 scope.setVar(var_name, result);
+            }
+            case "MethodDecl" -> {
+                // already declared in global scope
             }
             case "MethodCall" -> {
                 processMethodCall(node, scope);
@@ -298,7 +315,6 @@ public class Interpreter {
                     if (result != null) return result;
                 }
             }
-            case "LocalVarDecl", "MethodDecl" -> { /* processed on semantic phase */ }
             default -> {
                 j0.error("the node is not implemented: " + node.sym + " " + node.tok);
             }
