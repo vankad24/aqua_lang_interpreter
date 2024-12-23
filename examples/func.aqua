@@ -12,6 +12,5 @@ fn foo(int a, int b){
 hello()
 
 
-int r
 r = 2 + foo(2, 7)
 println(r)

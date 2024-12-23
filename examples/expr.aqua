@@ -1,8 +1,9 @@
-float f
-int i
 i = 4
 f = (5.3 + i) * 2
 println(f)
 bool b
-b = (3 >= 3.0) && (1 + 3 == 4) || false
+b = 3 >= 3.0 && (1 + 3 == 4) || false
 println(b)
+
+
+println(true - false)
