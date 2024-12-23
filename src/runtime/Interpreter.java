@@ -222,6 +222,23 @@ public class Interpreter {
                 node.calculated_value = r;
                 return r;
             }
+            case "UnaryExpr" -> {
+
+
+                var op = node.kids[0].tok.text;
+                var right = analyzeExpr(node.kids[1], scope);
+
+                switch (op){
+                    case "-" -> {
+                        if (right.type != ValueType.FLOAT && right.type != ValueType.INTEGER) {
+                            ErrorHandler.typeError(node.kids[1].tok, String.format("expected type numeric type, got '%s'", ValueType.getName(right.type)));
+                        }
+                    }
+                    case "!" -> { checkType(node.kids[1].tok, op, ValueType.BOOL, right.type); }
+                    default -> {}
+                }
+
+            }
 
         }
         return new RuntimeValue(ValueType.UNKNOWN);
@@ -349,6 +366,17 @@ public class Interpreter {
                 var op = node.kids[1].tok.text;
                 var right = evalExpr(node.kids[2], scope);
                 return processOperator(left, op, right);
+            }
+            case "UnaryExpr" -> {
+                var op = node.kids[0].tok.text;
+                var right = evalExpr(node.kids[1], scope);
+
+                switch (op){
+                    case "-" -> { return processOperator(new RuntimeValue(right.type, 0), "-", right); }
+                    case "!" -> { return processOperator(new RuntimeValue(ValueType.BOOL, false), "==", right); }
+                    default -> {}
+                }
+
             }
 
         }
