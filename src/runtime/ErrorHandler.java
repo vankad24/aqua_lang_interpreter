@@ -10,8 +10,10 @@ public class ErrorHandler {
     }
 
     public static void error(Token t, String msg){
-        System.err.println("File "+j0.yyfilename+":"+t.lineno);
-        System.err.println("\t"+t.text);
+        if (t!=null) {
+            System.err.println("File " + j0.yyfilename + ":" + t.lineno);
+            System.err.println("\t" + t.text);
+        }
         System.err.println(msg);
         System.exit(1);
     }
