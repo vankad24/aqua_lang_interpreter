@@ -32,22 +32,50 @@ echo 'digraph { a -> b }' | ..\..\Graphviz\bin\dot.exe -Tpng > output.png
 public class j0 {
     public static Yylex yylexer;
     public static Parser par;
-    static boolean debug = true;
+    static boolean debug = false;
+    static boolean disable_semantic = false;
+    static String file_path = null;
 
-    public static void main(String argv[]) throws Exception {
-//        init("texts/hello.java");
-//        int i;
-//        while (true){
-//            int i;
-//
-//        }
-        init("examples/expr.aqua");
+    public static void main(String[] argv) throws Exception {
+        parseArguments(argv);
+        if (file_path == null){
+            System.err.println("No file path provided");
+            System.exit(1);
+        }
+        init(file_path);
+
         par = new Parser();
         //par.yydebug=true;
         yylineno = 1;
         int i = par.yyparse();
-        if (i == 0)
+        if (debug && i == 0)
             System.out.println("No errors");
+    }
+
+    private static void parseArguments(String[] args) {
+        for (String arg : args) {
+            if (arg.startsWith("-")) {
+                switch (arg) {
+                    case "--debug" -> debug = true;
+                    case "--no-semantic" -> disable_semantic = true;
+                    case "--24" -> {
+                        System.out.println("Пасхалочку нашёл, дружок! Держи с полки пирожок!");
+                        System.exit(0);
+                    }
+                    default -> {
+                        System.err.println("Unknown flag '"+arg+"'");
+                        System.exit(1);
+                    }
+                }
+            }else {
+                if (file_path != null){
+                    System.err.println("Expected only one file path parameter");
+                    System.exit(1);
+                } else {
+                    file_path = arg;
+                }
+            }
+        }
     }
 
     public static int yylineno;
@@ -125,14 +153,17 @@ public class j0 {
         SymbolTable global_scope = new SymbolTable("global");
         FunctionHandler.initBuiltin(global_scope);
 
-        if (debug) System.out.println("----semantic----");
-        Interpreter.semantic(root, global_scope);
+        if (!disable_semantic) {
+            if (debug) System.out.println("----semantic----");
+            Interpreter.semantic(root, global_scope);
+            if (debug) System.out.println("No errors");
+        }
         if (debug) System.out.println("----interpretation----");
         Interpreter.interpret(root, global_scope);
     }
 
     public static void semerror(String s) {
-        System.out.println("semantic error: " + s);
+        System.err.println("semantic error: " + s);
         System.exit(1);
     }
 
