@@ -125,9 +125,10 @@ public class Interpreter {
                 }
             }
             case "WhileStmt", "DoWhileStmt" -> {
-                var r = analyzeExpr(node.kids[0], scope);
-                checkType(node.tok, "while stmt condition", ValueType.BOOL, r.type);
-
+                if (!node.sym.equals("DoWhileStmt")) {
+                    var r = analyzeExpr(node.kids[0], scope);
+                    checkType(node.tok, "while stmt condition", ValueType.BOOL, r.type);
+                }
                 var while_block = node.kids[1];
                 var while_scope = new SymbolTable("while", scope);
                 analyzeBlock(while_block, while_scope);
@@ -135,6 +136,8 @@ public class Interpreter {
                 // set vars as assigned for do-while
                 if (node.sym.equals("DoWhileStmt")) {
                     scope.assigned_vars.addAll(while_scope.assigned_vars);
+                    var r = analyzeExpr(node.kids[0], while_scope);
+                    checkType(node.tok, "while stmt condition", ValueType.BOOL, r.type);
                 }
             }
             case "ForStmt" -> {
@@ -407,14 +410,15 @@ public class Interpreter {
     }
 
     static RuntimeValue processDoWhile(Tree expr, Tree block, SymbolTable scope) {
-        var r = evalBlock(block, new SymbolTable("do_while_stmt", scope));
+        SymbolTable do_while_scope = new SymbolTable("do_while_stmt", scope);
+        var r = evalBlock(block, do_while_scope);
         if (r != null) return r;
-        var condition = evalExpr(expr, scope);
+        var condition = evalExpr(expr, do_while_scope);
         while ((boolean) condition.value) {
-            var while_scope = new SymbolTable("do_while_stmt", scope);
-            r = evalBlock(block, while_scope);
+            do_while_scope = new SymbolTable("do_while_stmt", scope);
+            r = evalBlock(block, do_while_scope);
             if (r != null) return r;
-            condition = evalExpr(expr, while_scope);
+            condition = evalExpr(expr, do_while_scope);
         }
         return null;
     }
