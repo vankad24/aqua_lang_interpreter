@@ -45,9 +45,15 @@ contexts:
       scope: comment.block.aqua
 
     # Operators
-    - match: (?:\+|-|\*|\/|\=|<|>|<\=|>\=|!\=|\=\=)
-      scope: keyword.operator.aqua
-
+    - match: '==|!=|<=|>=|<>|<|>'
+      scope: keyword.operator.comparison.aqua
+    - match: '='
+      scope: keyword.operator.assignment.aqua
+    - match: '\+\+?|\-\-?|[*/%]'
+      scope: keyword.operator.arithmetic.aqua
+    - match: '!|&&|\|\|'
+      scope: keyword.operator.logical.aqua
+    
     # Numbers
     - match: '\b(-)?[0-9]+(.[0-9]+)?\b'
       scope: constant.numeric.aqua
