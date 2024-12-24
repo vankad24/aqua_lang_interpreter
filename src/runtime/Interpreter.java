@@ -238,6 +238,7 @@ public class Interpreter {
                     case "!" -> { checkType(node.kids[1].tok, op, ValueType.BOOL, right.type); }
                     default -> {}
                 }
+                return right;
 
             }
 

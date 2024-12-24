@@ -137,6 +137,10 @@ public class PrimitiveHandler {
             case "||" -> new RuntimeValue(ValueType.BOOL,v1 || v2);
             case "==" -> new RuntimeValue(ValueType.BOOL,v1 == v2);
             case "!=" -> new RuntimeValue(ValueType.BOOL,v1 != v2);
+            case "<" -> new RuntimeValue(ValueType.BOOL,!v1 && v2);
+            case ">" -> new RuntimeValue(ValueType.BOOL,v1 && !v2);
+            case "<=" -> new RuntimeValue(ValueType.BOOL,!v1 || v2);
+            case ">=" -> new RuntimeValue(ValueType.BOOL,v1 || !v2);
             default -> {
                 throw new IllegalArgumentException("Unsupported operator: " + op);
             }
