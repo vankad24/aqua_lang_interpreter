@@ -3,7 +3,7 @@
 %token INTLIT DOUBLELIT STRINGLIT BOOLLIT NULLVAL
 %token LESSTHANOREQUAL GREATERTHANOREQUAL
 %token ISEQUALTO NOTEQUALTO LOGICALAND LOGICALOR
-%token INCREMENT DECREMENT PUBLIC STATIC
+%token INCREMENT DECREMENT MINUSEQUAL ADDEQUAL MULEQUAL DIVEQUAL PUBLIC STATIC
 %{
 import static frontend.j0.yylex;
 import static frontend.Yyerror.yyerror;
@@ -172,7 +172,9 @@ CondOrExpr: CondAndExpr | CondOrExpr LOGICALOR CondAndExpr {
 
 Expr: CondOrExpr;
 Assignment: LeftHandSide AssignOp Expr {
-$$=j0.node("Assignment",1370, $1, $2, $3); };
+$$=j0.node("Assignment",1370, $1, $2, $3); } |
+LeftHandSide IncrementOp { $$=j0.node("Assignment",1380, $1, $2); };
 LeftHandSide: Name | FieldAccess ;
-AssignOp: '=' | INCREMENT | DECREMENT ;
+AssignOp: '=' | MULEQUAL | DIVEQUAL | MINUSEQUAL | ADDEQUAL;
+IncrementOp: INCREMENT | DECREMENT;
 %%

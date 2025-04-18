@@ -25,7 +25,21 @@ public class Interpreter {
             }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
-                var result = analyzeExpr(node.kids[2], scope);
+                RuntimeValue result;
+                String op = node.kids[1].tok.text;
+                if (!op.equals("=")) {
+                    String s = switch (op) {
+                        case "+=", "-=", "++", "--" -> "AddExpr";
+                        case "*=","/=" -> "MulExpr";
+                        default -> null;
+                    };
+                    Tree add_value;
+                    if (op.equals("++") || op.equals("--")) add_value = new Tree("token", -1, new Token(Parser.INTLIT, "1", -1));
+                    else add_value = node.kids[2];
+                    result = analyzeExpr(new Tree(s, -1, new Tree[]{new Tree("token", -1, node.kids[0].tok), new Tree("token", -1, new Token(-1, op.substring(0, 1), -1)), add_value}), scope);
+                }else{
+                    result = analyzeExpr(node.kids[2], scope);
+                }
                 var v = scope.getVar(var_name);
                 if (v == null) scope.addVar(var_name, result);
                 else checkType(node.kids[0].tok, var_name, v.type, result.type);
@@ -307,7 +321,24 @@ public class Interpreter {
             }
             case "Assignment" -> {
                 String var_name = node.kids[0].tok.text;
-                var result = evalExpr(node.kids[2], scope);
+                RuntimeValue result;
+                String op = node.kids[1].tok.text;
+                if (!op.equals("=")) {
+                    String s = switch (op) {
+                        case "+=", "-=", "++", "--" -> "AddExpr";
+                        case "*=","/=" -> "MulExpr";
+                        default -> null;
+                    };
+                    Tree add_value;
+                    if (op.equals("++") || op.equals("--")){
+                        add_value = new Tree("token", -1, new Token(Parser.INTLIT, "1", -1));
+                        add_value.calculated_value = new RuntimeValue(ValueType.INTEGER, 1);;
+                    }
+                    else add_value = node.kids[2];
+                    result = evalExpr(new Tree(s, -1, new Tree[]{new Tree("token", -1, node.kids[0].tok), new Tree("token", -1, new Token(-1, op.substring(0, 1), -1)), add_value}), scope);
+                }else{
+                    result = evalExpr(node.kids[2], scope);
+                }
                 var v = scope.getVar(var_name);
                 if (v == null) scope.addVar(var_name, result);
                 else scope.setVar(var_name, result);
@@ -365,7 +396,7 @@ public class Interpreter {
             }
             case "AddExpr", "MulExpr", "RelExpr", "EqExpr", "CondAndExpr", "CondOrExpr" -> {
                 RuntimeValue r = node.calculated_value;
-                if (r.value != null) return r;
+                if (r!=null && r.value != null) return r;
 
                 var left = evalExpr(node.kids[0], scope);
                 var op = node.kids[1].tok.text;
