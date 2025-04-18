@@ -59,6 +59,14 @@ public class j0 {
                         System.out.println("Пасхалочку нашёл, дружок! Держи с полки пирожок!");
                         System.exit(0);
                     }
+                    case "--version" -> {
+                        System.out.println("Version: 0.00000000000000000000000000001");
+                        System.exit(0);
+                    }
+                    case "--help" -> {
+                        System.out.println("Try to press f1");
+                        System.exit(0);
+                    }
                     default -> {
                         ErrorHandler.print("Unknown flag '"+arg+"'");
                     }
