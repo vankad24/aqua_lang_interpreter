@@ -1,3 +1,5 @@
+# Да, это тот самый 🤿
+
 ## Запуск
 - Для запуска вам потребуется java (да, интерпретатор интерпретируется)
 - [Скачайте](https://github.com/vankad24/aqua_lang_interpreter/archive/refs/heads/master.zip) и распакуйте архив проекта
