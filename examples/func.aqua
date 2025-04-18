@@ -9,8 +9,12 @@ fn foo(int a, int b){
     return a-b
 }
 
+fn sq(int a){
+    return a * a
+}
+
 hello()
 
-
+println(sq(sq(sq(sq(2)))))
 r = 2 + foo(2, 7)
 println(r)

@@ -1,0 +1,8 @@
+sum = 0
+do {
+	num = readInt()
+	if (num>10 && num % 3 == 0)
+		sum += num
+}while num%5 != 0
+
+println(sum)

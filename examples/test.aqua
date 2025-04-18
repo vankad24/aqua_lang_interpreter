@@ -1,0 +1,17 @@
+println("x y w z")
+for x1 : 2 {
+	for y1 : 2 {
+		for w1 : 2{
+			for z1 : 2{
+				x = x1 == 1
+				y = y1 == 1
+				w = w1 == 1
+				z = z1 == 1
+				if !(((x <= y) && (y <= w)) || (z == (x || y))) {
+					println(x1, y1, w1, z1)
+				}
+			}
+		}
+	}
+}
+					
