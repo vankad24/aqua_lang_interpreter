@@ -1,2 +1,2 @@
 @echo off
-java -jar %~dp0aqua.jar %*
+java -jar "%~dp0aqua.jar" %*
