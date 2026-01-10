@@ -1,0 +1,25 @@
+intarray arr;
+
+arr = newIntArray(5)
+
+for i : getLen(arr){
+    setElement(arr, i, (i+1)*2)
+}
+
+for i : getLen(arr){
+    el = getElement(arr, i)
+    setElement(arr, i, el-1)
+}
+
+println(arr)
+
+printChar(72)
+printChar(105)
+printChar(33)
+println()
+
+str = readCharsAsIntArray()
+println(str)
+for i : getLen(str){
+    printChar(getElement(str, i))
+}
