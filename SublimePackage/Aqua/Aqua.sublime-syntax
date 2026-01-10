@@ -59,7 +59,7 @@ contexts:
       scope: constant.numeric.aqua
 
     # Builtin functions
-    - match: \b(print|println|readInt|readFloat)\b
+    - match: \b(print|println|readInt|readFloat|newIntArray|getElement|setElement|readCharsAsIntArray|printChar|getLen)\b
       scope: support.function.builtin.aqua
 
     # Function call

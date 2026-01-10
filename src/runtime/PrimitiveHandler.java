@@ -83,6 +83,7 @@ public class PrimitiveHandler {
             case Parser.INT-> ValueType.INTEGER;
             case Parser.FLOAT-> ValueType.FLOAT;
             case Parser.BOOL-> ValueType.BOOL;
+            case Parser.INTARRAY-> ValueType.INTARRAY;
             default ->  ValueType.UNKNOWN;
         };
     }

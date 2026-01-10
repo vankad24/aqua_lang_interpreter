@@ -37,6 +37,8 @@ public class j0 {
 
     public static void main(String[] argv) throws Exception {
         parseArguments(argv);
+//        file_path = "examples/brain_fuck_interpreter.aqua";
+
         if (file_path == null){
             ErrorHandler.print("No file path provided");
         }
@@ -60,7 +62,7 @@ public class j0 {
                         System.exit(0);
                     }
                     case "--version" -> {
-                        System.out.println("Version: 0.00000000000000000000000000001");
+                        System.out.println("Version: 0.00000000000000000000000000002");
                         System.exit(0);
                     }
                     case "--help" -> {
