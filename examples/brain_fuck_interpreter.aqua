@@ -44,5 +44,5 @@ fn interpret(intarray code){
     }
 }
 
-code = readCharsAsIntArray()
+code = readFile(getArg(-1))
 interpret(code)
