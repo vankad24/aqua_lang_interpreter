@@ -5,7 +5,6 @@ package frontend;
 import runtime.*;
 
 import java.io.FileReader;
-import java.util.Iterator;
 
 /*
 cd .\src\frontend\
@@ -34,10 +33,13 @@ public class j0 {
     static boolean debug = false;
     static boolean disable_semantic = false;
     static String file_path = null;
+    public static String[] args;
 
     public static void main(String[] argv) throws Exception {
+//        argv = new String[]{ "examples/brain_fuck_interpreter.aqua", "examples/hello.bf"};
+//        file_path = "examples/expr.aqua";
+        args = argv;
         parseArguments(argv);
-//        file_path = "examples/brain_fuck_interpreter.aqua";
 
         if (file_path == null){
             ErrorHandler.print("No file path provided");
@@ -74,11 +76,7 @@ public class j0 {
                     }
                 }
             }else {
-                if (file_path != null){
-                    ErrorHandler.print("Expected only one file path parameter");
-                } else {
-                    file_path = arg;
-                }
+                if (file_path == null) file_path = arg;
             }
         }
     }

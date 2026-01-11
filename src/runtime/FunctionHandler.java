@@ -3,6 +3,10 @@ package runtime;
 import frontend.Tree;
 import frontend.j0;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -10,7 +14,7 @@ import java.util.Scanner;
 public class FunctionHandler {
     static Scanner sc = new Scanner(System.in);
 
-     static Object[][] built_in_functions = {{"print", ValueType.NONE}, {"println", ValueType.NONE}, {"readInt",ValueType.INTEGER}, {"readFloat",ValueType.FLOAT }, {"newIntArray",ValueType.INTARRAY }, {"getElement",ValueType.INTEGER }, {"setElement",ValueType.NONE }, {"readCharsAsIntArray",ValueType.INTARRAY }, {"printChar", ValueType.NONE}, {"getLen", ValueType.INTEGER}, {"readChar", ValueType.INTEGER}};
+     static Object[][] built_in_functions = {{"print", ValueType.NONE}, {"println", ValueType.NONE}, {"readInt",ValueType.INTEGER}, {"readFloat",ValueType.FLOAT }, {"newIntArray",ValueType.INTARRAY }, {"getElement",ValueType.INTEGER }, {"setElement",ValueType.NONE }, {"readCharsAsIntArray",ValueType.INTARRAY }, {"printChar", ValueType.NONE}, {"getLen", ValueType.INTEGER}, {"readChar", ValueType.INTEGER}, {"getArg", ValueType.INTARRAY }, {"readFile", ValueType.INTARRAY },};
 
     public static void initBuiltin(SymbolTable scope){
         for (var pair : built_in_functions) {
@@ -128,7 +132,39 @@ public class FunctionHandler {
             case "getArg" -> {
                 checkArgsNumber(name, 1, args_list.size());
                 var runtimeValue1 = Interpreter.evalExpr(args_list.get(0), scope);
+                checkArgsType(name, ValueType.INTEGER, runtimeValue1.type);
+                int index = (int)runtimeValue1.value;
+                if (index<0)index = j0.args.length+index;
+                String s = j0.args[index];
 
+                int[] arr = new int[s.length()];
+                for (int i = 0; i < s.length(); i++) {
+                    arr[i] = s.charAt(i);
+                }
+                return new RuntimeValue(ValueType.INTARRAY, arr);
+            }
+            case "readFile" -> {
+                checkArgsNumber(name, 1, args_list.size());
+                var runtimeValue1 = Interpreter.evalExpr(args_list.get(0), scope);
+                checkArgsType(name, ValueType.INTARRAY, runtimeValue1.type);
+                String path = "";
+                var arr = (int[])runtimeValue1.value;
+
+                for (int i = 0; i < arr.length; i++) {
+                    path+= (char)arr[i];
+                }
+                String s="";
+                try {
+                    s = readFileToString(path);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                arr = new int[s.length()];
+                for (int i = 0; i < s.length(); i++) {
+                    arr[i] = s.charAt(i);
+                }
+                return new RuntimeValue(ValueType.INTARRAY, arr);
             }
             default -> {
                 ErrorHandler.notImplementedError("build in function "+name);
@@ -151,6 +187,10 @@ public class FunctionHandler {
 
     static void checkArgsType(String fun_name, int expected, int got){
         if (expected!=got)ErrorHandler.print("Function "+fun_name+" expected "+ValueType.getName(expected)+" type, but "+ValueType.getName(got)+" was given");
+    }
+
+    public static String readFileToString(String filePath) throws IOException {
+        return Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
     }
 
 }
