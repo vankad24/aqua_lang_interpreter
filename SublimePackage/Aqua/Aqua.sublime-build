@@ -8,6 +8,10 @@
         {
             "name": "Debug",
             "cmd": ["aqua.bat", "--debug", "$file"]
+        },
+        {
+            "name": "Linux",
+            "cmd": ["aqua", "$file"]
         }
     ]
 }
