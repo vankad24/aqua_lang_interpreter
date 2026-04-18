@@ -1,0 +1,4 @@
+fn foo(int a){
+    return a + b
+}
+res = foo(2)

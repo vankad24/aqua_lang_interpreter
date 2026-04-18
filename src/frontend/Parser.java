@@ -866,7 +866,7 @@ String yys;    //current token string
 //###############################################################
 // method: yyparse : parse input and execute indicated items
 //###############################################################
-int yyparse()
+public int yyparse()
 {
 boolean doaction;
   init_stacks();

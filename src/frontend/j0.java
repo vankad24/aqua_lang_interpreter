@@ -34,6 +34,7 @@ public class j0 {
     static boolean disable_semantic = false;
     static String file_path = null;
     public static String[] args;
+    public static SymbolTable global_scope;
 
     public static void main(String[] argv) throws Exception {
 //        argv = new String[]{ "examples/brain_fuck_interpreter.aqua", "examples/hello.bf"};
@@ -45,12 +46,14 @@ public class j0 {
             ErrorHandler.print("No file path provided");
         }
         init(file_path);
-        par = new Parser();
-        //par.yydebug=true;
-        yylineno = 1;
-        int i = par.yyparse();
-        if (debug && i == 0)
-            System.out.println("No errors");
+
+        try {
+            int i = par.yyparse();
+            if (debug && i == 0)
+                System.out.println("No errors");
+        }catch (RuntimeException e){
+            System.err.println(e.getMessage());
+        }
     }
 
     private static void parseArguments(String[] args) {
@@ -60,11 +63,11 @@ public class j0 {
                     case "--debug" -> debug = true;
                     case "--no-semantic" -> disable_semantic = true;
                     case "--24" -> {
-                        System.out.println("Пасхалочку нашёл, дружок! Держи с полки пирожок!");
+                        System.out.println("Пасхалочку нашёл, дружок! Возьми с полки пирожок!");
                         System.exit(0);
                     }
                     case "--version" -> {
-                        System.out.println("Version: 0.00000000000000000000000000002");
+                        System.out.println("Version: 0.00000000000000000000000000003");
                         System.exit(0);
                     }
                     case "--help" -> {
@@ -88,6 +91,9 @@ public class j0 {
     public static void init(String s) throws Exception {
         yyfilename = s;
         yylexer = new Yylex(new FileReader(s));
+        yylineno = 1;
+        par = new Parser();
+        //par.yydebug=true;
     }
 
     public static int YYEOF() {
@@ -152,7 +158,7 @@ public class j0 {
         if (debug)root.print();
 //        ((Tree) root.obj).print_graph(yyfilename + ".dot");
 
-        SymbolTable global_scope = new SymbolTable("global");
+        global_scope = new SymbolTable("global");
         FunctionHandler.initBuiltin(global_scope);
 
         if (!disable_semantic) {

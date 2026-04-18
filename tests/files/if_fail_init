@@ -1,0 +1,9 @@
+
+int res
+if 4 >= 3.0 && (4 + 3 >=  6) || false {
+    if (res==4) res=1
+}else if true {
+    print("else")
+}
+
+print(n)

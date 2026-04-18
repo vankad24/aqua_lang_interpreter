@@ -1,0 +1,8 @@
+
+res = 4
+if 4 >= 3.0 && (res + 3 >=  6) || false {
+    if (res==4) res+=4
+}else if true {
+    res=1
+}
+

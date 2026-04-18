@@ -1,0 +1,3 @@
+arr = newIntArray(2)
+setElement(arr, 3, 10)
+res = getElement(arr, 3)

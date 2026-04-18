@@ -1,0 +1,5 @@
+arr = newIntArray(3)
+for i : 3 {
+    setElement(arr, i, i+1)
+}
+res = getElement(arr, 2)

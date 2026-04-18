@@ -5,17 +5,17 @@ import frontend.j0;
 
 public class ErrorHandler {
     public static void print(String msg){
-        System.err.println(msg);
-        System.exit(1);
+        throw new RuntimeException(msg);
     }
 
     public static void error(Token t, String msg){
+        String result_msg = "";
         if (t!=null) {
-            System.err.println("File " + j0.yyfilename + ":" + t.lineno);
-            System.err.println("\t" + t.text);
+            result_msg+="File " + j0.yyfilename + ":" + t.lineno + "\n";
+            result_msg+="\t" + t.text + "\n";
         }
-        System.err.println(msg);
-        System.exit(1);
+        result_msg+=msg;
+        throw new RuntimeException(result_msg);
     }
 
     // The error appears only if there is a bug in the interpreter

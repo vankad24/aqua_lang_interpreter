@@ -36,7 +36,7 @@ public class Yyerror {
     public static void yyerror(String s) {
         //      if (singleton == null) singleton = new yyerror();
         //      if (s.indexOf("stack") != -1) {
-        System.err.println(" line " + j0.yylineno +
+        System.err.println("Lexer error: line " + j0.yylineno +
                 ", lexeme \"" + j0.yylexer.yytext() + "\": " + s);
         System.exit(1);
         //      }
