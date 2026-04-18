@@ -1,0 +1,3 @@
+#!/bin/bash
+cd $(dirname $(which aqua))
+java -jar aqua.jar "$@"

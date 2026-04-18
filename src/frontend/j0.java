@@ -43,7 +43,8 @@ public class j0 {
         parseArguments(argv);
 
         if (file_path == null){
-            ErrorHandler.print("No file path provided");
+            System.err.println("No file path provided");
+            System.exit(1);
         }
         init(file_path);
 
