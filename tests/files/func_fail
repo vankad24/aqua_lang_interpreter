@@ -1,4 +1,7 @@
 fn foo(int a){
-    return a + b
+    if a < 4 {
+        return a * 2
+    }
+    return true
 }
 res = foo(2)

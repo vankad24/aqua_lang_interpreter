@@ -12,6 +12,10 @@
         {
             "name": "Linux",
             "cmd": ["aqua", "$file"]
+        },
+        {
+            "name": "Linux Debug",
+            "cmd": ["aqua", "--debug", "$file"]
         }
     ]
 }

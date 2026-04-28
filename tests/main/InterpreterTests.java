@@ -77,7 +77,7 @@ class InterpreterTests {
 
     @Test
     void test_func_fail() {
-        test_fail("func_fail", "name 'b' is not defined");
+        test_fail("func_fail", "Inconsistent return types.");
     }
 
     @Test
