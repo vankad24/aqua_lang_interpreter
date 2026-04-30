@@ -1,0 +1,14 @@
+
+println("Enter a number:")
+n = readInt()+1
+result = 1
+for i=2 : n {
+    result *= i
+}
+println(result)
+
+if 3 > 5 {
+    println(4)
+}elif 6 < 3 {
+    println(24)
+}
